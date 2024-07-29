@@ -3,6 +3,7 @@ package com.example.models;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bson.Document;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,15 +12,15 @@ public class Account {
     private int userId;
     private String type;
     private List<LendingMaterial> checkedOutItems;
-    private float fine;
+    private float balance;
 
     // Constructor
-    public Account(int accountId, int userId, String type, float fine) {
+    public Account(int accountId, int userId, String type, float balance) {
         this.accountId = accountId;
         this.userId = userId;
         this.type = type;
         this.checkedOutItems = new ArrayList<>();
-        this.fine = fine;
+        this.balance = balance;
     }
 
     // Getters and setters
@@ -63,25 +64,30 @@ public class Account {
         this.checkedOutItems.remove(item);
     }
 
-    public float getFine() {
-        return fine;
+    public float getbalance() {
+        return balance;
     }
 
-    public void setFine(float fine) {
-        this.fine = fine;
+    public void setbalance(float balance) {
+        this.balance = balance;
     }
+
     // Serialize the Account object to a MongoDB Document
     public Document toDocument() {
         Document doc = new Document("accountId", accountId)
                 .append("userId", userId)
                 .append("type", type)
-                .append("checkedOutItems", serializeCheckedOutItems());
+                .append("checkedOutItems", serializeCheckedOutItems())
+                .append("balance", balance);
         return doc;
     }
 
     // Deserialize a MongoDB Document to an Account object
     public static Account fromDocument(Document doc) {
-        Account account = new Account(doc.getInteger("accountId"), doc.getInteger("userId"), doc.getString("type"));
+        Account account = new Account(doc.getInteger("accountId"),
+                                      doc.getInteger("userId"),
+                                      doc.getString("type"),
+                                      doc.getDouble("balance").floatValue());
         account.setCheckedOutItems(deserializeCheckedOutItems((List<Document>) doc.get("checkedOutItems")));
         return account;
     }

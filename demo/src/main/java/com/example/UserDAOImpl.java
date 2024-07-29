@@ -15,12 +15,12 @@ public class UserDAOImpl implements UserDAO {
     }
 
     private MongoCollection<Document> getCollection() {
-        return database.getCollection("users");
+        return database.getCollection("Users");
     }
 
     @Override
-    public User getUserById(String userId) {
-        Document doc = getCollection().find(Filters.eq("userId", userId)).first();
+    public User getUserById(int userId) {
+        Document doc = getCollection().find(Filters.eq("UserID", userId)).first();
         if (doc != null) {
             return fromDocument(doc);
         }
@@ -29,8 +29,16 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public boolean authenticateUser(String userId, String password) {
-        Document doc = getCollection().find(Filters.and(Filters.eq("userId", userId), Filters.eq("password", password))).first();
-        return doc != null;
+        Document doc = getCollection().find(Filters.and(Filters.eq("UserID", userId), Filters.eq("Password", password))).first();
+        if (doc != null) {
+            // Print the userId and password from the document
+            System.out.println("UserID from doc: " + doc.getString("UserID"));
+            System.out.println("Password from doc: " + doc.getString("Password"));
+            return true;
+        } else {
+            System.out.println("Doc is null");
+            return false;
+        }
     }
 
     @Override
@@ -40,12 +48,12 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public void updateUser(User user) {
-        getCollection().updateOne(Filters.eq("userId", user.getUserId()), new Document("$set", toDocument(user)));
+        getCollection().updateOne(Filters.eq("UserID", user.getUserId()), new Document("$set", toDocument(user)));
     }
 
     @Override
-    public void deleteUser(String userId) {
-        getCollection().deleteOne(Filters.eq("userId", userId));
+    public void deleteUser(int userId) {
+        getCollection().deleteOne(Filters.eq("UserID", userId));
     }
 
     private Document toDocument(User user) {

@@ -1,5 +1,6 @@
 package com.example.models;
 
+
 public abstract class LendingMaterial {
     private int materialID;
     private String type;
