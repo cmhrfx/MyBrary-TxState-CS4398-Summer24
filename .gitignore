@@ -4,5 +4,6 @@
 
 #unignore what we want to track
 !*.java
+!/models/
 !/models/*
 !.gitignore
