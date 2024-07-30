@@ -57,7 +57,7 @@ public class BrowseController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 view.setVisible(false);
-                CheckoutView checkoutView = new CheckoutView(user, cart);
+                CheckoutView checkoutView = new CheckoutView(user, cart, accountDAO);
                 new CheckoutController(lendingMaterialDAO, checkoutView, cart);
                 checkoutView.setCart(cart.getItems());
                 checkoutView.setVisible(true);

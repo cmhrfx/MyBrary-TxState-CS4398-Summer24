@@ -1,5 +1,6 @@
 package com.example.view;
 
+import com.example.dao.AccountDAO;
 import com.example.models.Book;
 import com.example.models.Cart;
 import com.example.models.LendingMaterial;
@@ -13,15 +14,17 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class CheckoutView extends JFrame {
+    private AccountDAO accountDAO;
     private JTable cartTable;
     private DefaultTableModel tableModel;
     private Cart cart;
     private User user;
     private JButton confirmButton;
 
-    public CheckoutView(User user, Cart cart) {
+    public CheckoutView(User user, Cart cart, AccountDAO accountDAO) {
         this.user = user;
         this.cart = cart;
+        this.accountDAO = accountDAO;
 
         setTitle("Checkout");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
