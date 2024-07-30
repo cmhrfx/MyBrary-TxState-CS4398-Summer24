@@ -1,8 +1,12 @@
 package com.example;
 
 import com.example.controller.LoginController;
+import com.example.dao.LendingMaterialDAO;
+import com.example.dao.LendingMaterialDAOImpl;
 import com.example.dao.UserDAO;
 import com.example.dao.UserDAOImpl;
+import com.example.dao.AccountDAO;
+import com.example.dao.AccountDAOImpl;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
@@ -16,6 +20,8 @@ import org.bson.Document;
 public class App {
     private static LibraryDatabaseConnection dbConnection;
     private static UserDAO userDAO;
+    private static LendingMaterialDAO lendingMaterialDAO;
+    private static AccountDAO accountDAO;
 
     public static void main(String[] args) {
         // Replace with your actual connection string and database name
@@ -24,6 +30,8 @@ public class App {
 
         dbConnection = new LibraryDatabaseConnection(connectionString, databaseName);
         userDAO = new UserDAOImpl(dbConnection);
+        lendingMaterialDAO = new LendingMaterialDAOImpl(dbConnection);
+        accountDAO = new AccountDAOImpl(dbConnection);
 
         // MAIN DEBUG
         MongoDatabase database = dbConnection.getDatabase();
@@ -56,14 +64,14 @@ public class App {
         boolean libraryCardsCollectionExists = collectionExists(database, "LibraryCards");
         System.out.println("LibraryCards collection exists: " + libraryCardsCollectionExists);
 
-        // Initialize the model
+        // Initialize the Cart
         Cart cart = new Cart();
 
         // Initialize the login view
         LoginView loginView = new LoginView();
 
         // Initialize the login controller
-        new LoginController(userDAO, loginView);
+        new LoginController(userDAO, lendingMaterialDAO, accountDAO, loginView, cart);
 
         // Make the login view visible
         loginView.setVisible(true);

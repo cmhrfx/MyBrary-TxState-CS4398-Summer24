@@ -1,29 +1,55 @@
 package com.example.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "Type"
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = Book.class, name = "Book"),
+    @JsonSubTypes.Type(value = Movie.class, name = "Movie")
+})
 public abstract class LendingMaterial {
-    private int materialID;
+    private String materialID;
     private String type;
-    private String available;
+    private boolean available;
     private String checkedOutDate;
     private String checkedOutBy;
     private int copiesAvailable;
 
-    // Constructor
-    public LendingMaterial(int materialID, String type) {
+    // Default constructor
+    public LendingMaterial() {
+    }
+
+    // Parameterized constructor
+    @JsonCreator
+    public LendingMaterial(@JsonProperty("MaterialID") String materialID,
+                           @JsonProperty("Type") String type,
+                           @JsonProperty("Available") boolean available,
+                           @JsonProperty("CheckedOutDate") String checkedOutDate,
+                           @JsonProperty("CheckedOutBy") String checkedOutBy,
+                           @JsonProperty("CopiesAvailable") int copiesAvailable) {
         this.materialID = materialID;
         this.type = type;
-        this.available = "Yes";
-        this.checkedOutDate = null;
-        this.checkedOutBy = null;
-        this.copiesAvailable = 1;
+        this.available = available;
+        this.checkedOutDate = checkedOutDate;
+        this.checkedOutBy = checkedOutBy;
+        this.copiesAvailable = copiesAvailable;
     }
 
     // Getters and setters
-    public int getMaterialID() {
+    public String getMaterialID() {
         return materialID;
     }
 
-    public void setMaterialID(int materialID) {
+    public void setMaterialID(String materialID) {
         this.materialID = materialID;
     }
 
@@ -35,11 +61,11 @@ public abstract class LendingMaterial {
         this.type = type;
     }
 
-    public String getAvailable() {
+    public boolean getAvailable() {
         return available;
     }
 
-    public void setAvailable(String available) {
+    public void setAvailable(boolean available) {
         this.available = available;
     }
 
@@ -75,6 +101,10 @@ public abstract class LendingMaterial {
     private double getMaxFine() {
         // Return the maximum fine, which could be the value of the book or some predefined value
         return 20.0; // Example value
+    }
+
+    public boolean isAvailable() {
+        return (copiesAvailable > 0);
     }
 
     // Abstract methods to be implemented by subclasses

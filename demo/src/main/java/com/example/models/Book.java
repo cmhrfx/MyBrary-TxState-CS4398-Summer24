@@ -1,15 +1,34 @@
 package com.example.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Book extends LendingMaterial {
     private String title;
     private String author;
     private String genre;
-    private String height;
+    private int height;
     private String publisher;
 
-    // Constructor
-    public Book(int materialID, String type, String title, String author, String genre, String height, String publisher) {
-        super(materialID, type);
+    // Default constructor
+    public Book() {
+        super();
+    }
+
+    // Parameterized constructor
+    @JsonCreator
+    public Book(@JsonProperty("MaterialID") String materialID,
+                @JsonProperty("Type") String type,
+                @JsonProperty("Title") String title,
+                @JsonProperty("Author") String author,
+                @JsonProperty("Genre") String genre,
+                @JsonProperty("Height") int height,
+                @JsonProperty("Publisher") String publisher,
+                @JsonProperty("Available") boolean available,
+                @JsonProperty("CheckedOutDate") String checkedOutDate,
+                @JsonProperty("CheckedOutBy") String checkedOutBy,
+                @JsonProperty("CopiesAvailable") int copiesAvailable) {
+        super(materialID, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
         this.title = title;
         this.author = author;
         this.genre = genre;
@@ -17,7 +36,7 @@ public class Book extends LendingMaterial {
         this.publisher = publisher;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public String getTitle() {
         return title;
     }
@@ -42,11 +61,11 @@ public class Book extends LendingMaterial {
         this.genre = genre;
     }
 
-    public String getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public void setHeight(String height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
@@ -58,11 +77,10 @@ public class Book extends LendingMaterial {
         this.publisher = publisher;
     }
 
-    // Implementing the abstract methods
     @Override
     public void checkout(String user, String date) {
-        if (getAvailable().equals("Yes")) {
-            setAvailable("No");
+        if (isAvailable()) {
+            setAvailable(false);
             setCheckedOutBy(user);
             setCheckedOutDate(date);
             System.out.println("The book '" + getTitle() + "' by " + getAuthor() + " has been checked out by " + user + " on " + date + ".");
@@ -73,8 +91,8 @@ public class Book extends LendingMaterial {
 
     @Override
     public void returnMaterial() {
-        if (getAvailable().equals("No")) {
-            setAvailable("Yes");
+        if (!isAvailable()) {
+            setAvailable(true);
             setCheckedOutBy(null);
             setCheckedOutDate(null);
             System.out.println("The book '" + getTitle() + "' by " + getAuthor() + " has been returned.");
@@ -82,6 +100,4 @@ public class Book extends LendingMaterial {
             System.out.println("The book '" + getTitle() + "' is not checked out.");
         }
     }
-
-
 }

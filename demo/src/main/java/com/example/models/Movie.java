@@ -1,12 +1,28 @@
 package com.example.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Movie extends LendingMaterial {
     private String title;
     private String author;
 
-    // Constructor
-    public Movie(int materialID, String type, String title, String author) {
-        super(materialID, type);
+    // Default constructor
+    public Movie() {
+        super();
+    }
+
+    // Parameterized constructor
+    @JsonCreator
+    public Movie(@JsonProperty("MaterialID") String materialID,
+                 @JsonProperty("Type") String type,
+                 @JsonProperty("Title") String title,
+                 @JsonProperty("Author") String author,
+                 @JsonProperty("Available") boolean available,
+                 @JsonProperty("CheckedOutDate") String checkedOutDate,
+                 @JsonProperty("CheckedOutBy") String checkedOutBy,
+                 @JsonProperty("CopiesAvailable") int copiesAvailable) {
+        super(materialID, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
         this.title = title;
         this.author = author;
     }
@@ -31,23 +47,23 @@ public class Movie extends LendingMaterial {
     // Implementing the abstract methods
     @Override
     public void checkout(String user, String date) {
-        if (getAvailable().equals("Yes")) {
-            setAvailable("No");
+        if (isAvailable()) {
+            setAvailable(false);
             setCheckedOutBy(user);
             setCheckedOutDate(date);
-            System.out.println("The movie '" + getTitle() + "' directed by " + getAuthor() + " has been checked out by " + user + " on " + date + ".");
+            System.out.println("The movie '" + getTitle() + "' by " + getAuthor() + " has been checked out by " + user + " on " + date + ".");
         } else {
             System.out.println("The movie '" + getTitle() + "' is already checked out.");
         }
     }
-
+    
     @Override
     public void returnMaterial() {
-        if (getAvailable().equals("No")) {
-            setAvailable("Yes");
+        if (!isAvailable()) {
+            setAvailable(true);
             setCheckedOutBy(null);
             setCheckedOutDate(null);
-            System.out.println("The movie '" + getTitle() + "' directed by " + getAuthor() + " has been returned.");
+            System.out.println("The movie '" + getTitle() + "' by " + getAuthor() + " has been returned.");
         } else {
             System.out.println("The movie '" + getTitle() + "' is not checked out.");
         }

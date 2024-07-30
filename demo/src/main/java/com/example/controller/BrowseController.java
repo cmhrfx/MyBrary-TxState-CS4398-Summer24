@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.dao.LendingMaterialDAO;
+import com.example.dao.AccountDAO;
 import com.example.models.Book;
 import com.example.models.Cart;
 import com.example.models.LendingMaterial;
@@ -14,15 +15,17 @@ import java.util.List;
 
 public class BrowseController {
     private LendingMaterialDAO lendingMaterialDAO;
+    private AccountDAO accountDAO;
     private Cart cart;
     private BrowseView view;
     private User user;
 
-    public BrowseController(LendingMaterialDAO lendingMaterialDAO, Cart cart, BrowseView view, User user) {
-        this.lendingMaterialDAO = lendingMaterialDAO;
-        this.cart = cart;
+    public BrowseController(BrowseView view, User user, LendingMaterialDAO lendingMaterialDAO, AccountDAO accountDAO, Cart cart) {
         this.view = view;
         this.user = user;
+        this.lendingMaterialDAO = lendingMaterialDAO;
+        this.accountDAO = accountDAO;
+        this.cart = cart;
 
         // Use DAO to fetch lending materials
         List<LendingMaterial> materials = lendingMaterialDAO.getAllLendingMaterials();

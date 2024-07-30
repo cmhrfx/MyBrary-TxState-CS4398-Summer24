@@ -5,7 +5,6 @@ import com.example.models.Cart;
 import com.example.models.LendingMaterial;
 import com.example.models.Movie;
 import com.example.models.User;
-import com.example.dao.LendingMaterialDAO;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -20,7 +19,6 @@ public class BrowseView extends JFrame {
     private User user;
     private JButton addButton;
     private JButton checkoutButton;
-    private LendingMaterialDAO lendingMaterialDAO;
 
     public BrowseView(User user) {  // Constructor should accept Cart as a parameter
         this.user = user;
@@ -48,7 +46,7 @@ public class BrowseView extends JFrame {
         panel.add(checkoutButton);
         add(panel, BorderLayout.SOUTH);
 
-        populateTable(lendingMaterialDAO.getAllLendingMaterials());
+        // populateTable(lendingMaterialDAO.getAllLendingMaterials());
 
         setVisible(true);
     }
