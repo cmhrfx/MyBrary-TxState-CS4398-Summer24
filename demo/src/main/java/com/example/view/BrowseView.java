@@ -57,6 +57,18 @@ public class BrowseView extends JFrame {
     public void setItems(List<LendingMaterial> items) {
         tableModel.setRowCount(0); // Clear existing data
         for (LendingMaterial item : items) {
+                String[] data = {item.getTitle(), item.getAuthor()};
+                tableModel.addRow(data);
+        } 
+    }
+
+    /*
+     * 
+     * 
+     * 
+    public void setItems(List<LendingMaterial> items) {
+        tableModel.setRowCount(0); // Clear existing data
+        for (LendingMaterial item : items) {
             if (item instanceof Book) {
                 Book book = (Book) item;
                 String[] data = {book.getTitle(), book.getAuthor()};
@@ -65,9 +77,11 @@ public class BrowseView extends JFrame {
                 Movie movie = (Movie) item;
                 String[] data = {movie.getTitle(), movie.getAuthor()};
                 tableModel.addRow(data);
-            }
+            } 
         }
     }
+
+     */
 
     public LendingMaterial getSelectedItem() {
         int selectedRow = itemTable.getSelectedRow();
@@ -101,6 +115,16 @@ public class BrowseView extends JFrame {
 
     private void populateTable(List<LendingMaterial> items) {
         for (LendingMaterial item : items) {
+            String[] data = {item.getTitle(), item.getAuthor()};
+            tableModel.addRow(data);
+        }
+    }
+
+    /*
+     * 
+     *     
+    private void populateTable(List<LendingMaterial> items) {
+        for (LendingMaterial item : items) {
             if (item instanceof Book) {
                 Book book = (Book) item;
                 String[] data = {book.getTitle(), book.getAuthor()};
@@ -112,6 +136,8 @@ public class BrowseView extends JFrame {
             }
         }
     }
+     * 
+     */
 
     public void displayMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
