@@ -1,5 +1,6 @@
-package com.example;
+package com.example.dao;
 
+import com.example.LibraryDatabaseConnection;
 import com.example.models.Account;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
@@ -17,7 +18,7 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     private MongoCollection<Document> getCollection() {
-        return database.getCollection("accounts");
+        return database.getCollection("Accounts");
     }
 
     @Override

@@ -1,23 +1,39 @@
 package com.example.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     private String userId;
-    private Account account;
+    private String accountId;
     private String name;
-    private String age;
+    private int age;
     private String address;
     private String password;
-    private LibraryCard libraryCard;
+    private String libraryCardNumber;
 
-    // Constructor
-    public User(String userId, Account account, String name, String age, String address, String password, LibraryCard libraryCard) {
+    // Default constructor
+    public User() {
+    }
+
+    // Parameterized constructor
+    @JsonCreator
+    public User(@JsonProperty("UserID") String userId,
+                @JsonProperty("AccountID") String accountId,
+                @JsonProperty("Name") String name,
+                @JsonProperty("Age") int age,
+                @JsonProperty("Address") String address,
+                @JsonProperty("Password") String password,
+                @JsonProperty("LibraryCardNumber") String libraryCardNumber) {
         this.userId = userId;
-        this.account = account;
+        this.accountId = accountId;
         this.name = name;
         this.age = age;
         this.address = address;
         this.password = password;
-        this.libraryCard = libraryCard;
+        this.libraryCardNumber = libraryCardNumber;
     }
 
     // Getters and setters
@@ -29,12 +45,12 @@ public class User {
         this.userId = userId;
     }
 
-    public Account getAccount() {
-        return account;
+    public String getAccountId() {
+        return accountId;
     }
 
-    public void setAccount(Account account) {
-        this.account = account;
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public String getName() {
@@ -45,11 +61,11 @@ public class User {
         this.name = name;
     }
 
-    public String getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(String age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
@@ -69,11 +85,18 @@ public class User {
         this.password = password;
     }
 
-    public LibraryCard getLibraryCard() {
-        return libraryCard;
+    public String getLibraryCard() {
+        return libraryCardNumber;
     }
 
-    public void setLibraryCard(LibraryCard libraryCard) {
-        this.libraryCard = libraryCard;
+    public void setLibraryCard(String libraryCardNumber) {
+        this.libraryCardNumber = libraryCardNumber;
     }
+
+
+
+
+
+
+
 }

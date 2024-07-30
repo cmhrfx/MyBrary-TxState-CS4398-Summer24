@@ -1,8 +1,13 @@
 package com.example;
 
+import com.example.controller.LoginController;
+import com.example.dao.UserDAO;
+import com.example.dao.UserDAOImpl;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
+import com.example.models.Cart;
+import com.example.view.LoginView;
 
 import javax.swing.*;
 
@@ -51,11 +56,17 @@ public class App {
         boolean libraryCardsCollectionExists = collectionExists(database, "LibraryCards");
         System.out.println("LibraryCards collection exists: " + libraryCardsCollectionExists);
 
-        // Launch the GUI
-        SwingUtilities.invokeLater(() -> {
-            LibraryView libraryView = new LibraryView(userDAO);
-            libraryView.createAndShowGUI();
-        });
+        // Initialize the model
+        Cart cart = new Cart();
+
+        // Initialize the login view
+        LoginView loginView = new LoginView();
+
+        // Initialize the login controller
+        new LoginController(userDAO, loginView);
+
+        // Make the login view visible
+        loginView.setVisible(true);
     }
 
     private static boolean collectionExists(MongoDatabase database, String collectionName) {

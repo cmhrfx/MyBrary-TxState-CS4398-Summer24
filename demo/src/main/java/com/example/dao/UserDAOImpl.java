@@ -1,5 +1,6 @@
-package com.example;
+package com.example.dao;
 
+import com.example.LibraryDatabaseConnection;
 import com.example.models.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
@@ -19,7 +20,7 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User getUserById(int userId) {
+    public User getUserById(String userId) {
         Document doc = getCollection().find(Filters.eq("UserID", userId)).first();
         if (doc != null) {
             return fromDocument(doc);

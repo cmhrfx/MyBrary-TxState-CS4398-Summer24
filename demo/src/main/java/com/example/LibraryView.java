@@ -1,5 +1,6 @@
 package com.example;
 
+import com.example.dao.UserDAO;
 import com.example.models.User;
 
 import javax.swing.*;
