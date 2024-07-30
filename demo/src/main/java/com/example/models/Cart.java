@@ -29,4 +29,16 @@ public class Cart {
     public boolean isEmpty() {
         return items.isEmpty();
     }
+
+
+    // Count the number of books in the cart
+    public int getNumberOfBooks() {
+        int bookCount = 0;
+        for (LendingMaterial item : items) {
+            if (item instanceof Book) {
+                bookCount++;
+            }
+        }
+        return bookCount;
+    }
 }
