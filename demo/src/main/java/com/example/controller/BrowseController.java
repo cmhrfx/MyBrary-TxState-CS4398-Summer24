@@ -40,34 +40,33 @@ public class BrowseController {
         view.addCheckoutListener(e -> handleCheckout());
     }
 
-private void handleAddToCart() {
-    LendingMaterial selectedItem = view.getSelectedItem();
-    if (selectedItem != null) {
-        if (selectedItem instanceof Book || selectedItem instanceof Movie) {
-            if (user.getAge() <= 12) {
-                int totalItems = cart.getNumberOfItems();
-                if (totalItems < 5) { // Limit of 5 items (books or movies) for users 12 and under
+    private void handleAddToCart() {
+        LendingMaterial selectedItem = view.getSelectedItem();
+        if (selectedItem != null) {
+            if (selectedItem instanceof Book || selectedItem instanceof Movie) {
+                if (user.getAge() <= 12) {
+                    int totalItems = cart.getNumberOfItems();
+                    if (totalItems < 5) { // Limit of 5 items (books or movies) for users 12 and under
+                        cart.addItem(selectedItem);
+                        view.displayMessage("Item added to cart!");
+                        System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
+                    } else {
+                        view.displayMessage("Maximum limit of 5 items reached!");
+                    }
+                } else {
+                    // No limit for users 13 and up
                     cart.addItem(selectedItem);
                     view.displayMessage("Item added to cart!");
                     System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
-                } else {
-                    view.displayMessage("Maximum limit of 5 items reached!");
                 }
             } else {
-                // No limit for users 13 and up
-                cart.addItem(selectedItem);
-                view.displayMessage("Item added to cart!");
-                System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
+                view.displayMessage("Only books and movies can be added to the cart!");
             }
         } else {
-            view.displayMessage("Only books and movies can be added to the cart!");
+            view.displayMessage("No item selected!");
         }
-    } else {
-        view.displayMessage("No item selected!");
     }
-}
-    
-
+        
     private void handleCheckout() {
         CheckoutView checkoutView = new CheckoutView(user, cart, accountDAO);
         new CheckoutController(lendingMaterialDAO, checkoutView, cart, user, accountDAO);
