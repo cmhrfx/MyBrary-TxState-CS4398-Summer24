@@ -13,6 +13,7 @@ public class User {
     private String address;
     private String password;
     private String libraryCardNumber;
+    private String type;
 
     // Default constructor
     public User() {
@@ -26,7 +27,8 @@ public class User {
                 @JsonProperty("Age") int age,
                 @JsonProperty("Address") String address,
                 @JsonProperty("Password") String password,
-                @JsonProperty("LibraryCardNumber") String libraryCardNumber) {
+                @JsonProperty("LibraryCardNumber") String libraryCardNumber,
+                @JsonProperty("Type") String type) {
         this.userId = userId;
         this.accountId = accountId;
         this.name = name;
@@ -34,6 +36,7 @@ public class User {
         this.address = address;
         this.password = password;
         this.libraryCardNumber = libraryCardNumber;
+        this.type = type;
     }
 
     // Getters and setters
@@ -93,4 +96,12 @@ public class User {
         this.libraryCardNumber = libraryCardNumber;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    
 }

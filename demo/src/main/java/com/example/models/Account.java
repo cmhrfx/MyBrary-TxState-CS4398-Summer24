@@ -1,13 +1,17 @@
 package com.example.models;
 
+import org.bson.Document;
+import org.bson.codecs.pojo.annotations.BsonId;
+import org.bson.codecs.pojo.annotations.BsonProperty;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bson.Document;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Account {
+    @BsonId
     private int accountId;
     private int userId;
     private String type;
