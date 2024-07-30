@@ -32,13 +32,13 @@ public class BrowseController {
         } else {
             System.out.println("BrowseController: Failed to populate Lending Materials");
         }
-        
-        view.setBooks(materials);
+
+        view.setItems(materials);
 
         view.addAddToCartListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Book selectedBook = view.getSelectedBook();
+                Book selectedBook = view.getSelectedItem();
                 if (selectedBook != null) {
                     cart.addItem(selectedBook);
                     view.displayMessage("Book added to cart!");
