@@ -5,6 +5,7 @@ import com.example.models.Cart;
 import com.example.models.LendingMaterial;
 import com.example.models.Movie;
 import com.example.models.User;
+import com.example.dao.LendingMaterialDAO;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -19,8 +20,9 @@ public class BrowseView extends JFrame {
     private User user;
     private JButton addButton;
     private JButton checkoutButton;
+    private LendingMaterialDAO lendingMaterialDAO;
 
-    public BrowseView(User user) {
+    public BrowseView(User user) {  // Constructor should accept Cart as a parameter
         this.user = user;
         this.cart = cart;
 
@@ -46,10 +48,13 @@ public class BrowseView extends JFrame {
         panel.add(checkoutButton);
         add(panel, BorderLayout.SOUTH);
 
+        populateTable(lendingMaterialDAO.getAllLendingMaterials());
+
         setVisible(true);
     }
 
     public void setItems(List<LendingMaterial> items) {
+        tableModel.setRowCount(0); // Clear existing data
         for (LendingMaterial item : items) {
             if (item instanceof Book) {
                 Book book = (Book) item;
@@ -85,6 +90,20 @@ public class BrowseView extends JFrame {
         return null;
     }
 
+    private void populateTable(List<LendingMaterial> items) {
+        for (LendingMaterial item : items) {
+            if (item instanceof Book) {
+                Book book = (Book) item;
+                String[] data = {book.getTitle(), book.getAuthor()};
+                tableModel.addRow(data);
+            } else if (item instanceof Movie) {
+                Movie movie = (Movie) item;
+                String[] data = {movie.getTitle(), movie.getAuthor()};
+                tableModel.addRow(data);
+            }
+        }
+    }
+
     public void displayMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
@@ -96,4 +115,5 @@ public class BrowseView extends JFrame {
     public void addCheckoutListener(ActionListener listener) {
         checkoutButton.addActionListener(listener);
     }
+
 }

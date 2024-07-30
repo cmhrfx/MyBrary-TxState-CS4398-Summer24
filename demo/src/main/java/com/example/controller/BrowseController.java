@@ -1,9 +1,9 @@
 package com.example.controller;
 
-import com.example.models.LendingMaterial;
 import com.example.dao.LendingMaterialDAO;
 import com.example.models.Book;
 import com.example.models.Cart;
+import com.example.models.LendingMaterial;
 import com.example.models.User;
 import com.example.view.BrowseView;
 import com.example.view.CheckoutView;
@@ -26,8 +26,7 @@ public class BrowseController {
 
         // Use DAO to fetch lending materials
         List<LendingMaterial> materials = lendingMaterialDAO.getAllLendingMaterials();
-        if (materials != null)
-        {
+        if (materials != null) {
             System.out.println("BrowseController: Lending Materials populated");
         } else {
             System.out.println("BrowseController: Failed to populate Lending Materials");
