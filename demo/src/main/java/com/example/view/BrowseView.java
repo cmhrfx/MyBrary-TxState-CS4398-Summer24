@@ -63,16 +63,21 @@ public class BrowseView extends JFrame {
         }
     }
 
-    public Book getSelectedItem() {
+    public LendingMaterial getSelectedItem() {
         int selectedRow = itemTable.getSelectedRow();
         if (selectedRow >= 0) {
             String title = (String) tableModel.getValueAt(selectedRow, 0);
             String author = (String) tableModel.getValueAt(selectedRow, 1);
-            for (LendingMaterial item : cart.getBooks()) {
+            for (LendingMaterial item : cart.getItems()) {
                 if (item instanceof Book) {
                     Book book = (Book) item;
                     if (book.getTitle().equals(title) && book.getAuthor().equals(author)) {
                         return book;
+                    }
+                } else if (item instanceof Movie) {
+                    Movie movie = (Movie) item;
+                    if (movie.getTitle().equals(title) && movie.getAuthor().equals(author)) {
+                        return movie;
                     }
                 }
             }

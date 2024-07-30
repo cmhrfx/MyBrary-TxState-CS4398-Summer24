@@ -3,6 +3,7 @@ package com.example.view;
 import com.example.models.Book;
 import com.example.models.Cart;
 import com.example.models.LendingMaterial;
+import com.example.models.Movie;
 import com.example.models.User;
 
 import javax.swing.*;
@@ -45,7 +46,7 @@ public class CheckoutView extends JFrame {
         add(buttonPanel, BorderLayout.SOUTH);
 
         confirmButton.addActionListener(e -> {
-            if (cart.getBooks().isEmpty()) {
+            if (cart.getItems().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "No items in cart to checkout.");
             } else {
                 cart.clearCart(); // Clear the cart after successful checkout
@@ -57,16 +58,16 @@ public class CheckoutView extends JFrame {
         removeButton.addActionListener(e -> {
             int selectedRow = cartTable.getSelectedRow();
             if (selectedRow >= 0) {
-                LendingMaterial item = cart.getBooks().get(selectedRow);
+                LendingMaterial item = cart.getItems().get(selectedRow);
                 cart.removeItem(item);
                 tableModel.removeRow(selectedRow);
-                JOptionPane.showMessageDialog(null, "Book removed from cart.");
+                JOptionPane.showMessageDialog(null, "Item removed from cart.");
             } else {
-                JOptionPane.showMessageDialog(null, "Please select a book to remove.");
+                JOptionPane.showMessageDialog(null, "Please select a item to remove.");
             }
         });
 
-        populateTable(cart.getBooks());
+        populateTable(cart.getItems());
     }
 
     private void populateTable(List<LendingMaterial> items) {
@@ -75,6 +76,10 @@ public class CheckoutView extends JFrame {
             if (item instanceof Book) {
                 Book book = (Book) item;
                 String[] data = {book.getTitle(), book.getAuthor()};
+                tableModel.addRow(data);
+            } else if (item instanceof Movie) {
+                Movie movie = (Movie) item;
+                String[] data = {movie.getTitle(), movie.getAuthor()};
                 tableModel.addRow(data);
             }
         }

@@ -10,7 +10,7 @@ public class Cart {
         items = new ArrayList<>();
     }
 
-    public List<LendingMaterial> getBooks() {
+    public List<LendingMaterial> getItems() {
         return items;
     }
 

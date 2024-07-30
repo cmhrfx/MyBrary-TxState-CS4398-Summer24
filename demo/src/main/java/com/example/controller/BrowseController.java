@@ -38,12 +38,12 @@ public class BrowseController {
         view.addAddToCartListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Book selectedBook = view.getSelectedItem();
-                if (selectedBook != null) {
-                    cart.addItem(selectedBook);
-                    view.displayMessage("Book added to cart!");
+                LendingMaterial selectedItem = view.getSelectedItem();
+                if (selectedItem != null) {
+                    cart.addItem(selectedItem);
+                    view.displayMessage("Item added to cart!");
                 } else {
-                    view.displayMessage("No book selected!");
+                    view.displayMessage("No item selected!");
                 }
             }
         });
@@ -54,7 +54,7 @@ public class BrowseController {
                 view.setVisible(false);
                 CheckoutView checkoutView = new CheckoutView(user, cart);
                 new CheckoutController(lendingMaterialDAO, checkoutView, cart);
-                checkoutView.setCart(cart.getBooks());
+                checkoutView.setCart(cart.getItems());
                 checkoutView.setVisible(true);
             }
         });
