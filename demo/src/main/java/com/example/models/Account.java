@@ -14,10 +14,10 @@ public class Account {
     private String type;
     @BsonProperty("checkedOutItems")
     private List<LendingMaterial> checkedOutItems;
-    private float balance;
+    private double balance;
 
     // Constructor
-    public Account(String accountId, String userId, String type, float balance) {
+    public Account(String accountId, String userId, String type, double balance) {
         this.accountId = accountId;
         this.userId = userId;
         this.type = type;
@@ -66,11 +66,11 @@ public class Account {
         this.checkedOutItems.remove(item);
     }
 
-    public float getBalance() {
+    public double getBalance() {
         return balance;
     }
 
-    public void setBalance(float balance) {
+    public void setBalance(double balance) {
         this.balance = balance;
     }
 
@@ -81,32 +81,32 @@ public class Account {
             checkedOutItemsDocs.add(item.toDocument());
         }
 
-        Document doc = new Document("accountId", accountId)
-                .append("userId", userId)
-                .append("type", type)
-                .append("checkedOutItems", checkedOutItemsDocs)
-                .append("balance", balance);
+        Document doc = new Document("AccountID", accountId)
+                .append("UserID", userId)
+                .append("Type", type)
+                .append("CheckedOutItems", checkedOutItemsDocs)
+                .append("Balance", balance);
         return doc;
     }
 
     // Deserialize a MongoDB Document to an Account object
     public static Account fromDocument(Document doc) {
-        Account account = new Account(doc.getString("accountId"),
-                                      doc.getString("userId"),
-                                      doc.getString("type"),
-                                      doc.getDouble("balance").floatValue());
+        Account account = new Account(doc.getString("AccountID"),
+                                      doc.getString("UserID"),
+                                      doc.getString("Type"),
+                                      doc.getDouble("Balance").doubleValue());
 
-        List<Document> checkedOutItemsDocs = (List<Document>) doc.get("checkedOutItems");
+        List<Document> checkedOutItemsDocs = (List<Document>) doc.get("CheckedOutItems");
         List<LendingMaterial> checkedOutItems = new ArrayList<>();
         for (Document itemDoc : checkedOutItemsDocs) {
             LendingMaterial item;
-            if ("Book".equals(itemDoc.getString("type"))) {
+            if ("Book".equals(itemDoc.getString("Type"))) {
                 item = Book.fromDocument(itemDoc);
-            } else if ("Movie".equals(itemDoc.getString("type"))) {
+            } else if ("Movie".equals(itemDoc.getString("Type"))) {
                 item = Movie.fromDocument(itemDoc);
             } else {
                 // handle other types or throw an exception
-                throw new IllegalArgumentException("Unknown type: " + itemDoc.getString("type"));
+                throw new IllegalArgumentException("Unknown type: " + itemDoc.getString("Type"));
             }
             checkedOutItems.add(item);
         }
