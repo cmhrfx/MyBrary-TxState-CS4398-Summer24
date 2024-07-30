@@ -52,7 +52,9 @@ public class LoginController {
                 System.out.println("Password: " + user.getPassword());
                 System.out.println("LibraryCard: " + user.getLibraryCard());
 
-                BrowseView browseView = new BrowseView(user);
+                System.out.println("LoginListener: Cart before creating BrowseController: " + (cart != null));
+
+                BrowseView browseView = new BrowseView(user, cart, lendingMaterialDAO);
                 BrowseController browseController = new BrowseController(browseView, user, lendingMaterialDAO, accountDAO, cart);
 
             } else {

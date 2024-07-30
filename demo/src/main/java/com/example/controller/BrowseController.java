@@ -27,6 +27,8 @@ public class BrowseController {
         this.accountDAO = accountDAO;
         this.cart = cart;
 
+        System.out.println("BrowseController: Cart received: " + (this.cart != null));
+
         // Use DAO to fetch lending materials
         List<LendingMaterial> materials = lendingMaterialDAO.getAllLendingMaterials();
         if (materials != null) {
@@ -44,6 +46,7 @@ public class BrowseController {
                 if (selectedItem != null) {
                     cart.addItem(selectedItem);
                     view.displayMessage("Item added to cart!");
+                    System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
                 } else {
                     view.displayMessage("No item selected!");
                 }

@@ -66,6 +66,7 @@ public class App {
 
         // Initialize the Cart
         Cart cart = new Cart();
+        System.out.println("Cart initialized: " + (cart != null));
 
         // Initialize the login view
         LoginView loginView = new LoginView();

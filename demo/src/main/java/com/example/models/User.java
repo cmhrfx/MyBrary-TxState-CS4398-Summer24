@@ -93,10 +93,4 @@ public class User {
         this.libraryCardNumber = libraryCardNumber;
     }
 
-
-
-
-
-
-
 }

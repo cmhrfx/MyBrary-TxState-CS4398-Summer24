@@ -1,5 +1,6 @@
 package com.example.view;
 
+import com.example.dao.LendingMaterialDAO;
 import com.example.models.Book;
 import com.example.models.Cart;
 import com.example.models.LendingMaterial;
@@ -19,10 +20,12 @@ public class BrowseView extends JFrame {
     private User user;
     private JButton addButton;
     private JButton checkoutButton;
+    private LendingMaterialDAO lendingMaterialDAO;
 
-    public BrowseView(User user) {  // Constructor should accept Cart as a parameter
+    public BrowseView(User user, Cart cart, LendingMaterialDAO lendingMaterialDAO) {  // Constructor should accept Cart as a parameter
         this.user = user;
         this.cart = cart;
+        this.lendingMaterialDAO = lendingMaterialDAO;
 
         setTitle("Browse Items");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -46,7 +49,7 @@ public class BrowseView extends JFrame {
         panel.add(checkoutButton);
         add(panel, BorderLayout.SOUTH);
 
-        // populateTable(lendingMaterialDAO.getAllLendingMaterials());
+        populateTable(lendingMaterialDAO.getAllLendingMaterials());
 
         setVisible(true);
     }
@@ -70,18 +73,26 @@ public class BrowseView extends JFrame {
         int selectedRow = itemTable.getSelectedRow();
         if (selectedRow >= 0) {
             String title = (String) tableModel.getValueAt(selectedRow, 0);
+            System.out.println("Selected Title: " + title);
             String author = (String) tableModel.getValueAt(selectedRow, 1);
-            for (LendingMaterial item : cart.getItems()) {
+            System.out.println("Selected Author: " + author);
+            for (LendingMaterial item : lendingMaterialDAO.getAllLendingMaterials()) {
                 if (item instanceof Book) {
+                    System.out.println("Found a book!");
                     Book book = (Book) item;
                     if (book.getTitle().equals(title) && book.getAuthor().equals(author)) {
+                        System.out.println("Returning Book!");
                         return book;
                     }
                 } else if (item instanceof Movie) {
+                    System.out.println("Found a movie!");
                     Movie movie = (Movie) item;
                     if (movie.getTitle().equals(title) && movie.getAuthor().equals(author)) {
+                        System.out.println("Returning Movie!");
                         return movie;
                     }
+                } else {
+                    System.out.println("Not a book or movie!");
                 }
             }
         }
