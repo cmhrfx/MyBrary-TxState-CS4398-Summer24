@@ -48,16 +48,6 @@ public class CheckoutView extends JFrame {
         buttonPanel.add(removeButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
-        confirmButton.addActionListener(e -> {
-            if (cart.getItems().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "No items in cart to checkout.");
-            } else {
-                cart.clearCart(); // Clear the cart after successful checkout
-                JOptionPane.showMessageDialog(null, "Checkout successful!");
-                dispose();
-            }
-        });
-
         removeButton.addActionListener(e -> {
             int selectedRow = cartTable.getSelectedRow();
             if (selectedRow >= 0) {
@@ -66,7 +56,7 @@ public class CheckoutView extends JFrame {
                 tableModel.removeRow(selectedRow);
                 JOptionPane.showMessageDialog(null, "Item removed from cart.");
             } else {
-                JOptionPane.showMessageDialog(null, "Please select a item to remove.");
+                JOptionPane.showMessageDialog(null, "Please select an item to remove.");
             }
         });
 
@@ -97,6 +87,9 @@ public class CheckoutView extends JFrame {
     }
 
     public void addConfirmListener(ActionListener listener) {
+        for (ActionListener al : confirmButton.getActionListeners()) {
+            confirmButton.removeActionListener(al);
+        }
         confirmButton.addActionListener(listener);
     }
 }

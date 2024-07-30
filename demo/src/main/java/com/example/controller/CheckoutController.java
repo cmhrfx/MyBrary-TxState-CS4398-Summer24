@@ -42,6 +42,7 @@ public class CheckoutController {
     }
 
     private boolean canCheckout() {
+        System.out.println("CheckoutController: canCheckout method called.");
         int maxItems = 0;
         if (user.getType().equalsIgnoreCase("member")) {
             if (user.getAge() < 12) {
@@ -56,12 +57,16 @@ public class CheckoutController {
     }
 
     private void updateAccountWithCheckedOutItems() {
+        System.out.println("CheckoutController: updateAccount method called.");
         Account account = accountDAO.getAccountById(user.getAccountId());
         if (account != null) {
+            System.out.println("CheckoutController:: updateAccount: account found!");
             List<LendingMaterial> checkedOutItems = account.getCheckedOutItems();
             checkedOutItems.addAll(cart.getItems());
             account.setCheckedOutItems(checkedOutItems);
             accountDAO.updateAccount(account);
+        } else {
+            System.out.println("CheckoutController:: updateAccount: account null!");
         }
     }
 }

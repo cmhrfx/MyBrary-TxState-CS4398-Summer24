@@ -45,7 +45,7 @@ public class LoginController {
                 loginView.dispose();
                 User user = userDAO.getUserById(username); // Assuming username is the user ID
                 System.out.println("UserID: " + user.getUserId());
-                System.out.println("Account: " + user.getAccountId());
+                System.out.println("AccountID: " + user.getAccountId());
                 System.out.println("Name: " + user.getName());
                 System.out.println("Age: " + user.getAge());
                 System.out.println("Address: " + user.getAddress());

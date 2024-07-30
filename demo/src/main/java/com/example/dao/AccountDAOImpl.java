@@ -20,7 +20,7 @@ public class AccountDAOImpl implements AccountDAO {
 
     @Override
     public Account getAccountById(String accountId) {
-        Document doc = getCollection().find(Filters.eq("accountId", accountId)).first();
+        Document doc = getCollection().find(Filters.eq("AccountID", accountId)).first();
         if (doc != null) {
             return Account.fromDocument(doc);
         }
@@ -34,11 +34,11 @@ public class AccountDAOImpl implements AccountDAO {
 
     @Override
     public void updateAccount(Account account) {
-        getCollection().updateOne(Filters.eq("accountId", account.getAccountId()), new Document("$set", account.toDocument()));
+        getCollection().updateOne(Filters.eq("AccountID", account.getAccountId()), new Document("$set", account.toDocument()));
     }
 
     @Override
     public void deleteAccount(int accountId) {
-        getCollection().deleteOne(Filters.eq("accountId", accountId));
+        getCollection().deleteOne(Filters.eq("AccountID", accountId));
     }
 }

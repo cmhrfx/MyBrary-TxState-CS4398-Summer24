@@ -30,15 +30,12 @@ public class Cart {
         return items.isEmpty();
     }
 
-
-    // Count the number of books in the cart
-    public int getNumberOfBooks() {
-        int bookCount = 0;
+    // Count the number of items in the cart
+    public int getNumberOfItems() {
+        int itemCount = 0;
         for (LendingMaterial item : items) {
-            if (item instanceof Book) {
-                bookCount++;
-            }
+            itemCount++;
         }
-        return bookCount;
+        return itemCount;
     }
 }

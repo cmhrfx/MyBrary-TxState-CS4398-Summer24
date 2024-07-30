@@ -2,8 +2,10 @@ package com.example.controller;
 
 import com.example.dao.LendingMaterialDAO;
 import com.example.dao.AccountDAO;
+import com.example.models.Book;
 import com.example.models.Cart;
 import com.example.models.LendingMaterial;
+import com.example.models.Movie;
 import com.example.models.User;
 import com.example.view.BrowseView;
 import com.example.view.CheckoutView;
@@ -38,17 +40,18 @@ public class BrowseController {
         view.addCheckoutListener(e -> handleCheckout());
     }
 
-    private void handleAddToCart() {
-        LendingMaterial selectedItem = view.getSelectedItem();
-        if (selectedItem != null && selectedItem instanceof Book) {
-            // Check if the user is 12 or under
+private void handleAddToCart() {
+    LendingMaterial selectedItem = view.getSelectedItem();
+    if (selectedItem != null) {
+        if (selectedItem instanceof Book || selectedItem instanceof Movie) {
             if (user.getAge() <= 12) {
-                if (cart.getNumberOfBooks() < 5) { // Limit of 5 books for users 12 and under
+                int totalItems = cart.getNumberOfItems();
+                if (totalItems < 5) { // Limit of 5 items (books or movies) for users 12 and under
                     cart.addItem(selectedItem);
                     view.displayMessage("Item added to cart!");
                     System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
                 } else {
-                    view.displayMessage("Maximum limit of 5 books reached!");
+                    view.displayMessage("Maximum limit of 5 items reached!");
                 }
             } else {
                 // No limit for users 13 and up
@@ -57,14 +60,17 @@ public class BrowseController {
                 System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
             }
         } else {
-            view.displayMessage("No item selected or item is not a book!");
+            view.displayMessage("Only books and movies can be added to the cart!");
         }
+    } else {
+        view.displayMessage("No item selected!");
     }
+}
     
 
     private void handleCheckout() {
         CheckoutView checkoutView = new CheckoutView(user, cart, accountDAO);
-        new CheckoutController(lendingMaterialDAO, checkoutView, cart);
+        new CheckoutController(lendingMaterialDAO, checkoutView, cart, user, accountDAO);
         checkoutView.setCart(cart.getItems());
         view.setVisible(false);
         checkoutView.setVisible(true);
