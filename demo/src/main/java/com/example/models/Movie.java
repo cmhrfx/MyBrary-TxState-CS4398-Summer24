@@ -1,11 +1,12 @@
 package com.example.models;
 
+import org.bson.Document;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Movie extends LendingMaterial {
-    private String title;
-    private String author;
+    private String genre;
+    private int duration; // duration in minutes
 
     // Default constructor
     public Movie() {
@@ -15,36 +16,37 @@ public class Movie extends LendingMaterial {
     // Parameterized constructor
     @JsonCreator
     public Movie(@JsonProperty("MaterialID") String materialID,
-                 @JsonProperty("Type") String type,
                  @JsonProperty("Title") String title,
                  @JsonProperty("Author") String author,
+                 @JsonProperty("Type") String type,
                  @JsonProperty("Available") boolean available,
                  @JsonProperty("CheckedOutDate") String checkedOutDate,
                  @JsonProperty("CheckedOutBy") String checkedOutBy,
-                 @JsonProperty("CopiesAvailable") int copiesAvailable) {
-        super(materialID, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
-        this.title = title;
-        this.author = author;
+                 @JsonProperty("CopiesAvailable") int copiesAvailable,
+                 @JsonProperty("Genre") String genre,
+                 @JsonProperty("Duration") int duration) {
+        super(materialID, title, author, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
+        this.genre = genre;
+        this.duration = duration;
     }
 
     // Getters and setters
-    public String getTitle() {
-        return title;
+    public String getGenre() {
+        return genre;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
-    public String getAuthor() {
-        return author;
+    public int getDuration() {
+        return duration;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
-    // Implementing the abstract methods
     @Override
     public void checkout(String user, String date) {
         if (isAvailable()) {
@@ -56,7 +58,7 @@ public class Movie extends LendingMaterial {
             System.out.println("The movie '" + getTitle() + "' is already checked out.");
         }
     }
-    
+
     @Override
     public void returnMaterial() {
         if (!isAvailable()) {
@@ -67,5 +69,29 @@ public class Movie extends LendingMaterial {
         } else {
             System.out.println("The movie '" + getTitle() + "' is not checked out.");
         }
+    }
+
+    // Convert to MongoDB Document
+    @Override
+    public Document toDocument() {
+        return super.toDocument()
+                .append("genre", genre)
+                .append("duration", duration);
+    }
+
+    // Convert from MongoDB Document
+    public static Movie fromDocument(Document doc) {
+        return new Movie(
+                doc.getString("materialID"),
+                doc.getString("title"),
+                doc.getString("author"),
+                doc.getString("type"),
+                doc.getBoolean("available"),
+                doc.getString("checkedOutDate"),
+                doc.getString("checkedOutBy"),
+                doc.getInteger("copiesAvailable"),
+                doc.getString("genre"),
+                doc.getInteger("duration")
+        );
     }
 }

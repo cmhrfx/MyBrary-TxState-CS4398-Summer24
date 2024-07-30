@@ -1,12 +1,12 @@
 package com.example.models;
 
+import org.bson.Document;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
     include = JsonTypeInfo.As.PROPERTY,
@@ -14,10 +14,15 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 )
 @JsonSubTypes({
     @JsonSubTypes.Type(value = Book.class, name = "Book"),
-    @JsonSubTypes.Type(value = Movie.class, name = "Movie")
+    @JsonSubTypes.Type(value = Movie.class, name = "Movie"),
+    @JsonSubTypes.Type(value = Magazine.class, name = "Magazine"),
+    @JsonSubTypes.Type(value = Journal.class, name = "Journal")
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class LendingMaterial {
     private String materialID;
+    private String title;
+    private String author;
     private String type;
     private boolean available;
     private String checkedOutDate;
@@ -31,12 +36,16 @@ public abstract class LendingMaterial {
     // Parameterized constructor
     @JsonCreator
     public LendingMaterial(@JsonProperty("MaterialID") String materialID,
+                           @JsonProperty("Title") String title,
+                           @JsonProperty("Author") String author,
                            @JsonProperty("Type") String type,
                            @JsonProperty("Available") boolean available,
                            @JsonProperty("CheckedOutDate") String checkedOutDate,
                            @JsonProperty("CheckedOutBy") String checkedOutBy,
                            @JsonProperty("CopiesAvailable") int copiesAvailable) {
         this.materialID = materialID;
+        this.title = title;
+        this.author = author;
         this.type = type;
         this.available = available;
         this.checkedOutDate = checkedOutDate;
@@ -53,6 +62,22 @@ public abstract class LendingMaterial {
         this.materialID = materialID;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
     public String getType() {
         return type;
     }
@@ -61,7 +86,7 @@ public abstract class LendingMaterial {
         this.type = type;
     }
 
-    public boolean getAvailable() {
+    public boolean isAvailable() {
         return available;
     }
 
@@ -86,11 +111,11 @@ public abstract class LendingMaterial {
     }
 
     public int getCopiesAvailable() {
-        return this.copiesAvailable;
+        return copiesAvailable;
     }
 
-    public void setCopiesAvailable(int copies) {
-        this.copiesAvailable = copies;
+    public void setCopiesAvailable(int copiesAvailable) {
+        this.copiesAvailable = copiesAvailable;
     }
 
     public double calculateOverdueFine(int overdueDays) {
@@ -103,8 +128,15 @@ public abstract class LendingMaterial {
         return 20.0; // Example value
     }
 
-    public boolean isAvailable() {
-        return (copiesAvailable > 0);
+    public Document toDocument() {
+        return new Document("materialID", materialID)
+                .append("title", title)
+                .append("author", author)
+                .append("type", type)
+                .append("available", available)
+                .append("checkedOutDate", checkedOutDate)
+                .append("checkedOutBy", checkedOutBy)
+                .append("copiesAvailable", copiesAvailable);
     }
 
     // Abstract methods to be implemented by subclasses

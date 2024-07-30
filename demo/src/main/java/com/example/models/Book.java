@@ -1,11 +1,10 @@
 package com.example.models;
 
+import org.bson.Document;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Book extends LendingMaterial {
-    private String title;
-    private String author;
     private String genre;
     private int height;
     private String publisher;
@@ -18,41 +17,23 @@ public class Book extends LendingMaterial {
     // Parameterized constructor
     @JsonCreator
     public Book(@JsonProperty("MaterialID") String materialID,
-                @JsonProperty("Type") String type,
                 @JsonProperty("Title") String title,
                 @JsonProperty("Author") String author,
-                @JsonProperty("Genre") String genre,
-                @JsonProperty("Height") int height,
-                @JsonProperty("Publisher") String publisher,
+                @JsonProperty("Type") String type,
                 @JsonProperty("Available") boolean available,
                 @JsonProperty("CheckedOutDate") String checkedOutDate,
                 @JsonProperty("CheckedOutBy") String checkedOutBy,
-                @JsonProperty("CopiesAvailable") int copiesAvailable) {
-        super(materialID, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
-        this.title = title;
-        this.author = author;
+                @JsonProperty("CopiesAvailable") int copiesAvailable,
+                @JsonProperty("Genre") String genre,
+                @JsonProperty("Height") int height,
+                @JsonProperty("Publisher") String publisher) {
+        super(materialID, title, author, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
         this.genre = genre;
         this.height = height;
         this.publisher = publisher;
     }
 
-    // Getters and Setters
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
+    // Getters and setters
     public String getGenre() {
         return genre;
     }
@@ -99,5 +80,31 @@ public class Book extends LendingMaterial {
         } else {
             System.out.println("The book '" + getTitle() + "' is not checked out.");
         }
+    }
+
+    // Convert to MongoDB Document
+    @Override
+    public Document toDocument() {
+        return super.toDocument()
+                .append("genre", genre)
+                .append("height", height)
+                .append("publisher", publisher);
+    }
+
+    // Convert from MongoDB Document
+    public static Book fromDocument(Document doc) {
+        return new Book(
+                doc.getString("materialID"),
+                doc.getString("title"),
+                doc.getString("author"),
+                doc.getString("type"),
+                doc.getBoolean("available"),
+                doc.getString("checkedOutDate"),
+                doc.getString("checkedOutBy"),
+                doc.getInteger("copiesAvailable"),
+                doc.getString("genre"),
+                doc.getInteger("height"),
+                doc.getString("publisher")
+        );
     }
 }

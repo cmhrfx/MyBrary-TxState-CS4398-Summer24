@@ -2,7 +2,6 @@ package com.example.controller;
 
 import com.example.dao.LendingMaterialDAO;
 import com.example.dao.AccountDAO;
-import com.example.models.Book;
 import com.example.models.Cart;
 import com.example.models.LendingMaterial;
 import com.example.models.User;
@@ -58,7 +57,7 @@ public class BrowseController {
             public void actionPerformed(ActionEvent e) {
                 view.setVisible(false);
                 CheckoutView checkoutView = new CheckoutView(user, cart, accountDAO);
-                new CheckoutController(lendingMaterialDAO, checkoutView, cart);
+                new CheckoutController(lendingMaterialDAO, checkoutView, cart, user, accountDAO);
                 checkoutView.setCart(cart.getItems());
                 checkoutView.setVisible(true);
             }

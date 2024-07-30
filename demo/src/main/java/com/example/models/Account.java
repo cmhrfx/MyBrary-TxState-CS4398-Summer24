@@ -4,22 +4,20 @@ import org.bson.Document;
 import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class Account {
     @BsonId
-    private int accountId;
-    private int userId;
+    private String accountId;
+    private String userId;
     private String type;
+    @BsonProperty("checkedOutItems")
     private List<LendingMaterial> checkedOutItems;
     private float balance;
 
     // Constructor
-    public Account(int accountId, int userId, String type, float balance) {
+    public Account(String accountId, String userId, String type, float balance) {
         this.accountId = accountId;
         this.userId = userId;
         this.type = type;
@@ -28,19 +26,19 @@ public class Account {
     }
 
     // Getters and setters
-    public int getAccountId() {
+    public String getAccountId() {
         return accountId;
     }
 
-    public void setAccountId(int accountId) {
+    public void setAccountId(String accountId) {
         this.accountId = accountId;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -68,54 +66,51 @@ public class Account {
         this.checkedOutItems.remove(item);
     }
 
-    public float getbalance() {
+    public float getBalance() {
         return balance;
     }
 
-    public void setbalance(float balance) {
+    public void setBalance(float balance) {
         this.balance = balance;
     }
 
     // Serialize the Account object to a MongoDB Document
     public Document toDocument() {
+        List<Document> checkedOutItemsDocs = new ArrayList<>();
+        for (LendingMaterial item : checkedOutItems) {
+            checkedOutItemsDocs.add(item.toDocument());
+        }
+
         Document doc = new Document("accountId", accountId)
                 .append("userId", userId)
                 .append("type", type)
-                .append("checkedOutItems", serializeCheckedOutItems())
+                .append("checkedOutItems", checkedOutItemsDocs)
                 .append("balance", balance);
         return doc;
     }
 
     // Deserialize a MongoDB Document to an Account object
     public static Account fromDocument(Document doc) {
-        Account account = new Account(doc.getInteger("accountId"),
-                                      doc.getInteger("userId"),
+        Account account = new Account(doc.getString("accountId"),
+                                      doc.getString("userId"),
                                       doc.getString("type"),
                                       doc.getDouble("balance").floatValue());
-        account.setCheckedOutItems(deserializeCheckedOutItems((List<Document>) doc.get("checkedOutItems")));
+
+        List<Document> checkedOutItemsDocs = (List<Document>) doc.get("checkedOutItems");
+        List<LendingMaterial> checkedOutItems = new ArrayList<>();
+        for (Document itemDoc : checkedOutItemsDocs) {
+            LendingMaterial item;
+            if ("Book".equals(itemDoc.getString("type"))) {
+                item = Book.fromDocument(itemDoc);
+            } else if ("Movie".equals(itemDoc.getString("type"))) {
+                item = Movie.fromDocument(itemDoc);
+            } else {
+                // handle other types or throw an exception
+                throw new IllegalArgumentException("Unknown type: " + itemDoc.getString("type"));
+            }
+            checkedOutItems.add(item);
+        }
+        account.setCheckedOutItems(checkedOutItems);
         return account;
-    }
-
-    // Serialize checked out items to JSON
-    private String serializeCheckedOutItems() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.writeValueAsString(checkedOutItems);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Deserialize JSON to checked out items
-    private static List<LendingMaterial> deserializeCheckedOutItems(List<Document> docs) {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(docs);
-            return mapper.readValue(json, new TypeReference<List<LendingMaterial>>() {});
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        }
     }
 }
