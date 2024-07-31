@@ -52,10 +52,6 @@ public class BrowseController {
         if (selectedItem != null) {
             if (selectedItem instanceof Book || selectedItem instanceof Movie) {
                 int totalItems = cart.getNumberOfItems();
-<<<<<<< HEAD
-                if (user.getAge() <= 12) {
-                    if (totalItems < 5) { // Limit of 5 items (books or movies) for users 12 and under
-=======
                 if (user.getType().equalsIgnoreCase("member")) {
                     if (user.getAge() <= 12) {
                         if (totalItems < 5) { // Limit of 5 items for users 12 and under
@@ -76,32 +72,12 @@ public class BrowseController {
                     }
                 } else if (user.getType().equalsIgnoreCase("staff")) {
                     if (totalItems < 12) { // Limit of 12 items for staff
->>>>>>> e86ecc0 (last push was bad. Corrected the checkout item check handling.)
                         cart.addItem(selectedItem);
                         view.displayMessage("Item added to cart!");
                         System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
                     } else {
                         view.displayMessage("Maximum limit of 12 items reached!");
                     }
-<<<<<<< HEAD
-                } else if (user.getAge() > 12 && user.getType() == "Member") {
-                    if (totalItems < 8) { // Limit of 5 items (books or movies) for users 12 and under
-                        cart.addItem(selectedItem);
-                        view.displayMessage("Item added to cart!");
-                        System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
-                    } else {
-                        view.displayMessage("Member: Maximum limit of 8 items reached!");
-                    }
-                } else if (user.getAge() > 12 && user.getType() == "Staff") {
-                    if (totalItems < 12) { // Limit of 5 items (books or movies) for users 12 and under
-                        cart.addItem(selectedItem);
-                        view.displayMessage("Item added to cart!");
-                        System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
-                    } else {
-                        view.displayMessage("Staff: Maximum limit of 12 items reached!");
-                    }
-=======
->>>>>>> e86ecc0 (last push was bad. Corrected the checkout item check handling.)
                 }
             } else {
                 view.displayMessage("Only books and movies can be added to the cart!");
