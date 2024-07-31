@@ -16,18 +16,23 @@ public class LoginController {
     private LendingMaterialDAO lendingMaterialDAO;
     private AccountDAO accountDAO;
     private LoginView loginView;
+    private BrowseView browseView;
     private Cart cart;
+    private User user;
 
     public LoginController(UserDAO userDAO, LendingMaterialDAO lendingMaterialDAO, AccountDAO accountDAO, 
-        LoginView loginView, Cart cart) {
+        LoginView loginView, BrowseView browseView, Cart cart, User user) {
 
         this.userDAO = userDAO;
         this.lendingMaterialDAO = lendingMaterialDAO;
         this.accountDAO = accountDAO;
         this.cart = cart;
         this.loginView = loginView;
-        this.loginView.addLoginListener(new LoginListener());
+        this.browseView = browseView;
+        this.user = user;
 
+
+        this.loginView.addLoginListener(new LoginListener());
     }
 
     class LoginListener implements ActionListener {
@@ -43,7 +48,7 @@ public class LoginController {
             if (authenticated) {
                 System.out.println("User authenticated: " + username);
                 loginView.dispose();
-                User user = userDAO.getUserById(username); // Assuming username is the user ID
+                user = userDAO.getUserById(username); // Assuming username is the user ID
                 System.out.println("UserID: " + user.getUserId());
                 System.out.println("AccountID: " + user.getAccountId());
                 System.out.println("Name: " + user.getName());
@@ -51,11 +56,10 @@ public class LoginController {
                 System.out.println("Address: " + user.getAddress());
                 System.out.println("Password: " + user.getPassword());
                 System.out.println("LibraryCard: " + user.getLibraryCard());
-
                 System.out.println("LoginListener: Cart before creating BrowseController: " + (cart != null));
 
-                BrowseView browseView = new BrowseView(user, cart, lendingMaterialDAO);
-                BrowseController browseController = new BrowseController(browseView, user, lendingMaterialDAO, accountDAO, cart);
+                loginView.setVisible(false);
+                browseView.setVisible(true);
 
             } else {
                 System.out.println("Authentication failed for user: " + username);

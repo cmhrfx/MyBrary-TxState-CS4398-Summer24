@@ -1,6 +1,8 @@
 package com.example;
 
 import com.example.controller.LoginController;
+import com.example.controller.BrowseController;
+import com.example.controller.CheckoutController;
 import com.example.dao.LendingMaterialDAO;
 import com.example.dao.LendingMaterialDAOImpl;
 import com.example.dao.UserDAO;
@@ -13,7 +15,10 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
 import com.example.models.Cart;
+import com.example.models.User;
+import com.example.view.BrowseView;
 import com.example.view.LoginView;
+import com.example.view.CheckoutView;
 
 import javax.swing.*;
 import java.time.LocalDate;
@@ -28,6 +33,7 @@ public class App {
     private static UserDAO userDAO;
     private static LendingMaterialDAO lendingMaterialDAO;
     private static AccountDAO accountDAO;
+    private static User user;
 
     public static void main(String[] args) {
         // database connection parameters
@@ -75,11 +81,18 @@ public class App {
         Cart cart = new Cart();
         System.out.println("Cart initialized: " + (cart != null));
 
-        // Initialize the login view
+        // define dummy user
+        user = new User("0", "0", "guest", 18, "guest", "guest", "guest", "guest");
+
+        // Initialize the views
         LoginView loginView = new LoginView();
+        BrowseView browseView = new BrowseView(user, cart, lendingMaterialDAO);
+        CheckoutView checkoutView = new CheckoutView(user, cart, accountDAO);
 
         // Initialize the login controller
-        new LoginController(userDAO, lendingMaterialDAO, accountDAO, loginView, cart);
+        new LoginController(userDAO, lendingMaterialDAO, accountDAO, loginView, browseView, cart, user);
+        new BrowseController(loginView, browseView, checkoutView, user, lendingMaterialDAO, accountDAO, cart);
+        new CheckoutController(lendingMaterialDAO, browseView, checkoutView, cart, user, accountDAO);
 
         // Make the login view visible
         loginView.setVisible(true);

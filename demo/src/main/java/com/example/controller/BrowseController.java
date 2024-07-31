@@ -7,6 +7,7 @@ import com.example.models.Cart;
 import com.example.models.LendingMaterial;
 import com.example.models.Movie;
 import com.example.models.User;
+import com.example.view.LoginView;
 import com.example.view.BrowseView;
 import com.example.view.CheckoutView;
 
@@ -16,11 +17,17 @@ public class BrowseController {
     private LendingMaterialDAO lendingMaterialDAO;
     private AccountDAO accountDAO;
     private Cart cart;
+    private LoginView loginView;
     private BrowseView view;
+    private CheckoutView checkoutView;
     private User user;
 
-    public BrowseController(BrowseView view, User user, LendingMaterialDAO lendingMaterialDAO, AccountDAO accountDAO, Cart cart) {
+    public BrowseController(LoginView loginView, BrowseView view,
+            CheckoutView checkoutView, User user, LendingMaterialDAO lendingMaterialDAO,
+            AccountDAO accountDAO, Cart cart) {
         this.view = view;
+        this.checkoutView = checkoutView;
+        this.loginView = loginView;
         this.user = user;
         this.lendingMaterialDAO = lendingMaterialDAO;
         this.accountDAO = accountDAO;
@@ -68,8 +75,6 @@ public class BrowseController {
     }
         
     private void handleCheckout() {
-        CheckoutView checkoutView = new CheckoutView(user, cart, accountDAO);
-        new CheckoutController(lendingMaterialDAO, checkoutView, cart, user, accountDAO);
         checkoutView.setCart(cart.getItems());
         view.setVisible(false);
         checkoutView.setVisible(true);

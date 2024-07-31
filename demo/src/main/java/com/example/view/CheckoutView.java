@@ -19,13 +19,18 @@ public class CheckoutView extends JFrame {
     private DefaultTableModel tableModel;
     private Cart cart;
     private User user;
+    private JButton previousButton;
+    private JButton removeButton;
     private JButton confirmButton;
 
     public CheckoutView(User user, Cart cart, AccountDAO accountDAO) {
         this.user = user;
         this.cart = cart;
         this.accountDAO = accountDAO;
+        initializeUI();
+    }
 
+    private void initializeUI() {
         setTitle("Checkout");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 400);
@@ -42,10 +47,12 @@ public class CheckoutView extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel();
+        previousButton = new JButton("Previous");
+        removeButton = new JButton("Remove Selected Book");
         confirmButton = new JButton("Confirm Checkout");
-        JButton removeButton = new JButton("Remove Selected Book");
-        buttonPanel.add(confirmButton);
+        buttonPanel.add(previousButton);
         buttonPanel.add(removeButton);
+        buttonPanel.add(confirmButton);
         add(buttonPanel, BorderLayout.SOUTH);
 
         removeButton.addActionListener(e -> {
@@ -91,5 +98,27 @@ public class CheckoutView extends JFrame {
             confirmButton.removeActionListener(al);
         }
         confirmButton.addActionListener(listener);
+    }
+
+    public void addRemoveButtonListener(ActionListener listener) {
+        for (ActionListener al : removeButton.getActionListeners()) {
+            removeButton.removeActionListener(al);
+        }
+        removeButton.addActionListener(listener);
+    }
+
+    public void addPreviousButtonListener(ActionListener listener) {
+        for (ActionListener al : previousButton.getActionListeners()) {
+            previousButton.removeActionListener(al);
+        }
+        previousButton.addActionListener(listener);
+    }
+
+    public int getSelectedRow() {
+        return cartTable.getSelectedRow();
+    }
+
+    public void removeSelectedRow(int row) {
+        tableModel.removeRow(row);
     }
 }

@@ -50,8 +50,6 @@ public class BrowseView extends JFrame {
         add(panel, BorderLayout.SOUTH);
 
         populateTable(lendingMaterialDAO.getAllLendingMaterials());
-
-        setVisible(true);
     }
 
     public void setItems(List<LendingMaterial> items) {

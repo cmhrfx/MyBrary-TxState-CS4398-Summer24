@@ -6,6 +6,7 @@ import com.example.models.Account;
 import com.example.models.Cart;
 import com.example.models.User;
 import com.example.models.LendingMaterial;
+import com.example.view.BrowseView;
 import com.example.view.CheckoutView;
 
 import java.awt.event.ActionEvent;
@@ -15,12 +16,14 @@ import java.util.List;
 public class CheckoutController {
     private LendingMaterialDAO lendingMaterialDAO;
     private AccountDAO accountDAO;
+    private BrowseView browseView;
     private CheckoutView view;
     private Cart cart;
     private User user;
 
-    public CheckoutController(LendingMaterialDAO lendingMaterialDAO, CheckoutView view, Cart cart, User user, AccountDAO accountDAO) {
+    public CheckoutController(LendingMaterialDAO lendingMaterialDAO, BrowseView browseView, CheckoutView view, Cart cart, User user, AccountDAO accountDAO) {
         this.lendingMaterialDAO = lendingMaterialDAO;
+        this.browseView = browseView;
         this.view = view;
         this.cart = cart;
         this.user = user;
@@ -37,6 +40,14 @@ public class CheckoutController {
                 } else {
                     view.displayMessage("You do not qualify to checkout this number of items.");
                 }
+            }
+        });
+
+        view.addPreviousButtonListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.setVisible(false);
+                browseView.setVisible(true);
             }
         });
     }
