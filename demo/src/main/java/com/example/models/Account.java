@@ -54,8 +54,11 @@ public class Account {
         return checkedOutItems;
     }
 
-    public void setCheckedOutItems(List<LendingMaterial> checkedOutItems) {
-        this.checkedOutItems = checkedOutItems;
+    public void setCheckedOutItems(List<LendingMaterial> newCheckedOutItems) {
+        if (this.checkedOutItems == null) {
+            this.checkedOutItems = new ArrayList<>();
+        }
+        this.checkedOutItems.addAll(newCheckedOutItems);
     }
 
     public void addCheckedOutItem(LendingMaterial item) {
