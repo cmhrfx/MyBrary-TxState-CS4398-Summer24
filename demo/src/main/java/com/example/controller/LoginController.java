@@ -58,8 +58,10 @@ public class LoginController {
                 System.out.println("LoginListener: Cart before creating BrowseController: " + (cart != null));
 
                 loginView.setVisible(false);
+                browseView.updateUserDialogue();
                 browseView.setVisible(true);
                 browseView.debug();
+                
             } else {
                 System.out.println("Authentication failed for user: " + username);
                 loginView.showError("Invalid username or password.");

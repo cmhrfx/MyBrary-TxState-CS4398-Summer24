@@ -23,6 +23,7 @@ public class BrowseView extends JFrame {
     private JButton addButton;
     private JButton checkoutButton;
     private LendingMaterialDAO lendingMaterialDAO;
+    private JLabel userInfoLabel;
 
     public BrowseView(User user, Cart cart, LendingMaterialDAO lendingMaterialDAO) {  // Constructor should accept Cart as a parameter
         this.user = User.getInstance();
@@ -35,7 +36,7 @@ public class BrowseView extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JLabel userInfoLabel = new JLabel("Welcome, " + user.getName());
+        userInfoLabel = new JLabel("Welcome, " + user.getName());
         add(userInfoLabel, BorderLayout.NORTH);
 
         String[] columnNames = {"Title", "Author", "Type", "Copies Available"};
@@ -125,6 +126,10 @@ public class BrowseView extends JFrame {
 
     public void debug(){
         System.out.println("BrowseView:: User: " + user.getName());
+    }
+
+    public void updateUserDialogue(){
+        userInfoLabel.setText("Welcome, " + user.getName());  // Update the text of the user info label
     }
 
 }
