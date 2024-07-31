@@ -43,6 +43,9 @@ public class App {
         // Update OverDue Items
         updateOverdueItems(accountDAO);
 
+        // Update Account Balances
+        updateAccountBalance(accountDAO);
+
         // MAIN DEBUG
         MongoDatabase database = dbConnection.getDatabase();
         System.out.println("Database found: " + (database != null));
@@ -115,4 +118,33 @@ public class App {
         }
     }
 
+    public static void updateAccountBalance(AccountDAO accountDAO) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate today = LocalDate.now();
+    
+        List<Document> lendedItems = accountDAO.getAllLendedItems();
+    
+        for (Document item : lendedItems) {
+            String returnDateStr = item.getString("ReturnDate");
+            String lastBalanceUpdateStr = item.getString("LastBalanceUpdate");
+    
+            if (returnDateStr != null && !returnDateStr.isEmpty()) {
+                LocalDate returnDate = LocalDate.parse(returnDateStr, formatter);
+                long daysOverdue = ChronoUnit.DAYS.between(returnDate, today);
+    
+                if (daysOverdue > 0) {
+                    LocalDate lastBalanceUpdate = lastBalanceUpdateStr == null || lastBalanceUpdateStr.isEmpty()
+                            ? returnDate : LocalDate.parse(lastBalanceUpdateStr, formatter);
+                    long daysSinceLastUpdate = ChronoUnit.DAYS.between(lastBalanceUpdate, today);
+    
+                    if (daysSinceLastUpdate > 0) {
+                        String accountId = item.getString("AccountID");
+                        double overdueFee = daysSinceLastUpdate * 0.10;
+                        accountDAO.incrementAccountBalance(accountId, overdueFee);
+                        accountDAO.updateLendedItemLastBalanceUpdate(item, today);
+                    }
+                }
+            }
+        }
+    }
 }

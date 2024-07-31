@@ -64,7 +64,7 @@ public class AccountDAOImpl implements AccountDAO {
                 .append("AccountID", accountId)
                 .append("LendedDate", currentDate.format(formatter))
                 .append("ReturnDate", returnDate.format(formatter))
-                .append("LastOverDueCheck", "")
+                .append("LastBalanceUpdate", "")
                 .append("DaysOverdue", 0);
             lendedItemsCollection.insertOne(lendedItemDoc);
         }
@@ -86,4 +86,24 @@ public class AccountDAOImpl implements AccountDAO {
             new Document("$set", new Document("DaysOverdue", daysOverdue))
         );
     }
+
+    @Override
+    public void updateLendedItemLastBalanceUpdate(Document item, LocalDate lastBalanceUpdate) {
+        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        lendedItemsCollection.updateOne(
+            Filters.eq("_id", item.getObjectId("_id")),
+            new Document("$set", new Document("LastBalanceUpdate", lastBalanceUpdate.format(formatter)))
+        );
+    }
+
+    @Override
+    public void incrementAccountBalance(String accountId, double amount) {
+        MongoCollection<Document> accountsCollection = getAccountsCollection();
+        accountsCollection.updateOne(
+            Filters.eq("AccountID", accountId),
+            new Document("$inc", new Document("balance", amount))
+        );
+    }
+
 }
