@@ -56,8 +56,10 @@ public class CheckoutController {
 
     private boolean canCheckout() {
         // see if they already have checked out items
-        // Account account2 = accountDAO.getAccountById(user.getAccountId());
-        // int oldItems = account2.getCheckedOutItems().size();
+        Account account = accountDAO.getAccountById(user.getAccountId());
+        int oldItems = account.getCheckedOutItems().size();
+        System.out.println("Number of old items: " + oldItems);
+        System.out.println("Number of new items: " + cart.getItems().size());
 
         System.out.println("CheckoutController: canCheckout method called.");
         int maxItems = 0;
@@ -70,8 +72,9 @@ public class CheckoutController {
         } else if (user.getType().equalsIgnoreCase("staff")) {
             maxItems = 12;
         }
-        // return (cart.getItems().size() + oldItems) <= maxItems;
-        return cart.getItems().size() <= maxItems;
+        System.out.println("return case for checkout?: " + ((cart.getItems().size() + oldItems) <= maxItems));
+        return ((cart.getItems().size() + oldItems) <= maxItems);
+        // return cart.getItems().size() <= maxItems;
     }
 
     private void updateAccountWithCheckedOutItems() {

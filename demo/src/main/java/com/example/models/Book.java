@@ -9,10 +9,12 @@ public class Book extends LendingMaterial {
     private int height;
     private String publisher;
     private String subType;
+    private Boolean bestSeller;
 
     // Default constructor
     public Book() {
         super();
+        this.subType = "Book";
     }
 
     // Parameterized constructor
@@ -25,12 +27,14 @@ public class Book extends LendingMaterial {
                 @JsonProperty("CopiesAvailable") int copiesAvailable,
                 @JsonProperty("Genre") String genre,
                 @JsonProperty("Height") int height,
-                @JsonProperty("Publisher") String publisher) {
+                @JsonProperty("Publisher") String publisher,
+                @JsonProperty("BestSeller") Boolean bestSeller) {
         super(materialID, title, author, type, test, copiesAvailable);
         this.subType = "Book";
         this.genre = genre;
         this.height = height;
         this.publisher = publisher;
+        this.bestSeller = bestSeller;
     }
 
     // Getters and setters
@@ -56,6 +60,14 @@ public class Book extends LendingMaterial {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    public Boolean getBestSeller() {
+        return bestSeller;
+    }
+
+    public void setBestSeller(Boolean bestSeller) {
+        this.bestSeller = bestSeller;
     }
 
     @Override
@@ -89,7 +101,8 @@ public class Book extends LendingMaterial {
         return super.toDocument()
                 .append("Genre", genre)
                 .append("Height", height)
-                .append("Publisher", publisher);
+                .append("Publisher", publisher)
+                .append("BestSeller", bestSeller);
     }
 
     // Convert from MongoDB Document
@@ -103,7 +116,8 @@ public class Book extends LendingMaterial {
                 doc.getInteger("CopiesAvailable"),
                 doc.getString("Genre"),
                 doc.getInteger("Height"),
-                doc.getString("Publisher")
+                doc.getString("Publisher"),
+                doc.getBoolean("BestSeller")
         );
     }
 }

@@ -52,7 +52,7 @@ public class BrowseController {
         if (selectedItem != null) {
             if (selectedItem instanceof Book || selectedItem instanceof Movie) {
                 int totalItems = cart.getNumberOfItems();
-                if (user.getType().equalsIgnoreCase("member")) {
+                if (user.getType().equalsIgnoreCase("Member")) {
                     if (user.getAge() <= 12) {
                         if (totalItems < 5) { // Limit of 5 items for users 12 and under
                             cart.addItem(selectedItem);
@@ -70,7 +70,7 @@ public class BrowseController {
                             view.displayMessage("Maximum limit of 8 items reached!");
                         }
                     }
-                } else if (user.getType().equalsIgnoreCase("staff")) {
+                } else if (user.getType().equalsIgnoreCase("Staff")) {
                     if (totalItems < 12) { // Limit of 12 items for staff
                         cart.addItem(selectedItem);
                         view.displayMessage("Item added to cart!");
