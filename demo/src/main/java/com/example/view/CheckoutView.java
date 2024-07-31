@@ -30,14 +30,16 @@ public class CheckoutView extends JFrame {
     private JButton previousButton;
     private JButton removeButton;
     private JButton confirmButton;
-    
+    private BrowseView browseView;
 
-    public CheckoutView(User user, Cart cart, AccountDAO accountDAO, LendingMaterialDAO lendingMaterialDAO) {
+    public CheckoutView(User user, Cart cart, AccountDAO accountDAO, LendingMaterialDAO lendingMaterialDAO, BrowseView browseView) {
         this.user = user;
         this.cart = cart;
         this.lendingMaterialDAO = lendingMaterialDAO;
         this.accountDAO = accountDAO;
+        this.browseView = browseView;
         initializeUI();
+        
     }
 
     private void initializeUI(){
@@ -64,19 +66,6 @@ public class CheckoutView extends JFrame {
         buttonPanel.add(removeButton);
         buttonPanel.add(confirmButton);
         add(buttonPanel, BorderLayout.SOUTH);
-
-
-        /*removeButton.addActionListener(e -> {
-            int selectedRow = cartTable.getSelectedRow();
-            if (selectedRow >= 0) {
-                LendingMaterial item = cart.getItems().get(selectedRow);
-                cart.removeItem(item);
-                tableModel.removeRow(selectedRow);
-                JOptionPane.showMessageDialog(null, "Item removed from cart.");
-            } else {
-                JOptionPane.showMessageDialog(null, "Please select an item to remove.");
-            }
-        });*/
         
         setupListeners();
         populateTable(cart.getItems());
@@ -104,7 +93,8 @@ public class CheckoutView extends JFrame {
 
     private void handlePrevious(){
         this.dispose();  // Close CheckoutView
-        BrowseView(user, cart, lendingMaterialDAO).setVisible(true);  // Reopen BrowseView with the same cart
+        browseView.setVisible(true);
+        //this.dispose();  // Close CheckoutView
     }
 
     private void handleRemove(){
@@ -134,3 +124,15 @@ public class CheckoutView extends JFrame {
         confirmButton.addActionListener(listener);
     }
 }
+
+/*removeButton.addActionListener(e -> {
+    int selectedRow = cartTable.getSelectedRow();
+    if (selectedRow >= 0) {
+        LendingMaterial item = cart.getItems().get(selectedRow);
+        cart.removeItem(item);
+        tableModel.removeRow(selectedRow);
+        JOptionPane.showMessageDialog(null, "Item removed from cart.");
+    } else {
+        JOptionPane.showMessageDialog(null, "Please select an item to remove.");
+    }
+});*/

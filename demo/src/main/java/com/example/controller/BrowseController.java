@@ -17,6 +17,7 @@ public class BrowseController {
     private AccountDAO accountDAO;
     private Cart cart;
     private BrowseView view;
+    private CheckoutView checkoutView;
     private User user;
 
     public BrowseController(BrowseView view, User user, LendingMaterialDAO lendingMaterialDAO, AccountDAO accountDAO, Cart cart) {
@@ -25,6 +26,8 @@ public class BrowseController {
         this.lendingMaterialDAO = lendingMaterialDAO;
         this.accountDAO = accountDAO;
         this.cart = cart;
+        this.view = view;
+        this.checkoutView = new CheckoutView(this.user, this.cart, this.accountDAO, this.lendingMaterialDAO, this.view);
 
         System.out.println("BrowseController: Cart received: " + (this.cart != null));
 
@@ -68,7 +71,7 @@ public class BrowseController {
     }
         
     private void handleCheckout() {
-        CheckoutView checkoutView = new CheckoutView(user, cart, accountDAO, lendingMaterialDAO);
+        checkoutView = new CheckoutView(user, cart, accountDAO, lendingMaterialDAO, view);
         new CheckoutController(lendingMaterialDAO, checkoutView, cart, user, accountDAO);
         checkoutView.setCart(cart.getItems());
         view.setVisible(false);

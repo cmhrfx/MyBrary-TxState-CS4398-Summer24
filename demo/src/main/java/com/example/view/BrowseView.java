@@ -22,13 +22,14 @@ public class BrowseView extends JFrame {
     private JButton checkoutButton;
     private LendingMaterialDAO lendingMaterialDAO;
 
+    
     public BrowseView(User user, Cart cart, LendingMaterialDAO lendingMaterialDAO) {  // Constructor should accept Cart as a parameter
         this.user = user;
         this.cart = cart;
         this.lendingMaterialDAO = lendingMaterialDAO;
 
         setTitle("Browse Items");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         setSize(600, 400);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -51,16 +52,17 @@ public class BrowseView extends JFrame {
 
         populateTable(lendingMaterialDAO.getAllLendingMaterials());
 
-        setVisible(true);
+        this.setVisible(true);
     }
 
     public void setItems(List<LendingMaterial> items) {
         tableModel.setRowCount(0); // Clear existing data
-        String copiesAvailable, itemType;
+        String copiesAvailable;
+        //String itemType;
         for (LendingMaterial item : items) {
             copiesAvailable = item.getCopiesAvailable() + ""; //concatnation to convert int to string.
-            itemType = item.getType();
-            System.out.println(itemType + "  ----  " + item.getType());
+            //itemType = item.getType();
+            //System.out.println(itemType + "  ----  " + item.getType());
             String[] data = {item.getTitle(), item.getAuthor(), item.getType(), copiesAvailable};
             tableModel.addRow(data);
         } 
