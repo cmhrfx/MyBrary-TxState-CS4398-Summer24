@@ -3,6 +3,7 @@ package com.example.view;
 import com.example.dao.LendingMaterialDAO;
 import com.example.models.Book;
 import com.example.models.Cart;
+import com.example.models.Journal;
 import com.example.models.LendingMaterial;
 import com.example.models.Movie;
 import com.example.models.User;
@@ -85,6 +86,7 @@ public class BrowseView extends JFrame {
                     }
                 } else {
                     System.out.println("Not a book or movie!");
+                    return (Journal) item;
                 }
             }
         }

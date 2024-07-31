@@ -4,7 +4,9 @@ import com.example.dao.LendingMaterialDAO;
 import com.example.dao.AccountDAO;
 import com.example.models.Book;
 import com.example.models.Cart;
+import com.example.models.Journal;
 import com.example.models.LendingMaterial;
+import com.example.models.Magazine;
 import com.example.models.Movie;
 import com.example.models.User;
 import com.example.view.LoginView;
@@ -68,9 +70,10 @@ public class BrowseController {
                 }
             } else {
                 view.displayMessage("Only books and movies can be added to the cart!");
-            }
+            }  
         } else {
             view.displayMessage("No item selected!");
+            
         }
     }
         
