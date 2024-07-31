@@ -29,27 +29,28 @@ public class CheckoutController {
         this.user = user;
         this.accountDAO = accountDAO;
 
-        view.addConfirmListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (canCheckout()) {
-                    updateAccountWithCheckedOutItems();
-                    cart.clearCart();
-                    view.displayMessage("Checkout confirmed! Thank you for your purchase.");
-                    view.dispose();
-                } else {
-                    view.displayMessage("You do not qualify to checkout this number of items.");
-                }
-            }
-        });
+        setupListeners();
+    }
 
-        view.addPreviousButtonListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                view.setVisible(false);
-                browseView.setVisible(true);
-            }
-        });
+    private void setupListeners() {
+        view.addConfirmListener(e -> handleConfirm());
+        view.addPreviousButtonListener(e -> handlePrevious());
+    }
+
+    private void handleConfirm() {
+        if (canCheckout()) {
+            updateAccountWithCheckedOutItems();
+            cart.clearCart();
+            view.displayMessage("Checkout confirmed! Thank you for your purchase.");
+            view.dispose();
+        } else {
+            view.displayMessage("You do not qualify to checkout this number of items.");
+        }
+    }
+
+    private void handlePrevious() {
+        view.setVisible(false);
+        browseView.setVisible(true);
     }
 
     private boolean canCheckout() {
