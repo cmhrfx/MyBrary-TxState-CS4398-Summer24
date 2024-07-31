@@ -4,10 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Cart {
+    private static Cart instance;
     private List<LendingMaterial> items;
 
-    public Cart() {
+    // Private constructor to prevent instantiation
+    private Cart() {
         items = new ArrayList<>();
+    }
+
+    // Public method to provide access to the singleton instance
+    public static synchronized Cart getInstance() {
+        if (instance == null) {
+            instance = new Cart();
+        }
+        return instance;
     }
 
     public List<LendingMaterial> getItems() {
@@ -16,6 +26,10 @@ public class Cart {
 
     public void addItem(LendingMaterial item) {
         items.add(item);
+    }
+
+    public void setItems(List<LendingMaterial> items) {
+        this.items = items;
     }
 
     public void removeItem(LendingMaterial item) {
@@ -32,10 +46,6 @@ public class Cart {
 
     // Count the number of items in the cart
     public int getNumberOfItems() {
-        int itemCount = 0;
-        for (LendingMaterial item : items) {
-            itemCount++;
-        }
-        return itemCount;
+        return items.size();
     }
 }

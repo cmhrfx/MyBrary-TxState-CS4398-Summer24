@@ -11,6 +11,7 @@ import com.example.view.CheckoutView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CheckoutController {
@@ -25,7 +26,7 @@ public class CheckoutController {
         this.lendingMaterialDAO = lendingMaterialDAO;
         this.browseView = browseView;
         this.view = view;
-        this.cart = cart;
+        this.cart = Cart.getInstance();
         this.user = User.getInstance();
         this.accountDAO = accountDAO;
 
@@ -54,6 +55,10 @@ public class CheckoutController {
     }
 
     private boolean canCheckout() {
+        // see if they already have checked out items
+        // Account account2 = accountDAO.getAccountById(user.getAccountId());
+        // int oldItems = account2.getCheckedOutItems().size();
+
         System.out.println("CheckoutController: canCheckout method called.");
         int maxItems = 0;
         if (user.getType().equalsIgnoreCase("member")) {
@@ -65,6 +70,7 @@ public class CheckoutController {
         } else if (user.getType().equalsIgnoreCase("staff")) {
             maxItems = 12;
         }
+        // return (cart.getItems().size() + oldItems) <= maxItems;
         return cart.getItems().size() <= maxItems;
     }
 
@@ -74,8 +80,11 @@ public class CheckoutController {
         if (account != null) {
             System.out.println("CheckoutController:: updateAccount: account found!");
             List<LendingMaterial> checkedOutItems = account.getCheckedOutItems();
+            System.out.println("CheckoutController:: updateAccount: items1: " + account.getCheckedOutItems());
             checkedOutItems.addAll(cart.getItems());
+            System.out.println("CheckoutController:: updateAccount: items2: " + checkedOutItems);
             account.setCheckedOutItems(checkedOutItems);
+            System.out.println("CheckoutController:: updateAccount: items3: " + account.getCheckedOutItems());
             accountDAO.updateAccount(account);
             accountDAO.updateLendedItems(cart.getItems(), user.getAccountId());
             System.out.println("CheckoutController:: updateAccount: account updated!");

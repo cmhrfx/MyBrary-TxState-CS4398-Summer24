@@ -31,7 +31,7 @@ public class BrowseController {
         this.user = User.getInstance();
         this.lendingMaterialDAO = lendingMaterialDAO;
         this.accountDAO = accountDAO;
-        this.cart = cart;
+        this.cart = Cart.getInstance();
 
         System.out.println("BrowseController: Cart received: " + (this.cart != null));
 
