@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Journal extends LendingMaterial {
-    private String volume;
-    private String issue;
-    private int pages;
+    private String subType;
 
     // Default constructor
     public Journal() {
@@ -23,39 +21,10 @@ public class Journal extends LendingMaterial {
                    @JsonProperty("Available") boolean available,
                    @JsonProperty("CheckedOutDate") String checkedOutDate,
                    @JsonProperty("CheckedOutBy") String checkedOutBy,
-                   @JsonProperty("CopiesAvailable") int copiesAvailable,
-                   @JsonProperty("Volume") String volume,
-                   @JsonProperty("Issue") String issue,
-                   @JsonProperty("Pages") int pages) {
+                   @JsonProperty("CopiesAvailable") int copiesAvailable) {
         super(materialID, title, author, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
-        this.volume = volume;
-        this.issue = issue;
-        this.pages = pages;
-    }
 
-    // Getters and setters
-    public String getVolume() {
-        return volume;
-    }
-
-    public void setVolume(String volume) {
-        this.volume = volume;
-    }
-
-    public String getIssue() {
-        return issue;
-    }
-
-    public void setIssue(String issue) {
-        this.issue = issue;
-    }
-
-    public int getPages() {
-        return pages;
-    }
-
-    public void setPages(int pages) {
-        this.pages = pages;
+        this.subType = "Journal";
     }
 
     @Override
@@ -82,6 +51,11 @@ public class Journal extends LendingMaterial {
         }
     }
 
+    @Override
+    public String getSubType() {
+        return subType;
+    }
+
     // Convert to MongoDB Document
     @Override
     public Document toDocument() {
@@ -98,10 +72,7 @@ public class Journal extends LendingMaterial {
                 doc.getBoolean("Available"),
                 doc.getString("CheckedOutDate"),
                 doc.getString("CheckedOutBy"),
-                doc.getInteger("CopiesAvailable"),
-                doc.getString("Volume"),
-                doc.getString("Issue"),
-                doc.getInteger("Pages")
+                doc.getInteger("CopiesAvailable")
         );
     }
 }

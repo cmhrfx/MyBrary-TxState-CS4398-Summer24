@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Magazine extends LendingMaterial {
-    private String genre;
-    private String frequency;
-    private int issueNumber;
+    private String subType;
 
     // Default constructor
     public Magazine() {
@@ -23,39 +21,15 @@ public class Magazine extends LendingMaterial {
                     @JsonProperty("Available") boolean available,
                     @JsonProperty("CheckedOutDate") String checkedOutDate,
                     @JsonProperty("CheckedOutBy") String checkedOutBy,
-                    @JsonProperty("CopiesAvailable") int copiesAvailable,
-                    @JsonProperty("Genre") String genre,
-                    @JsonProperty("Frequency") String frequency,
-                    @JsonProperty("IssueNumber") int issueNumber) {
+                    @JsonProperty("CopiesAvailable") int copiesAvailable) {
         super(materialID, title, author, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
-        this.genre = genre;
-        this.frequency = frequency;
-        this.issueNumber = issueNumber;
+
+        this.subType = "Magazine";
     }
 
-    // Getters and setters
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public String getFrequency() {
-        return frequency;
-    }
-
-    public void setFrequency(String frequency) {
-        this.frequency = frequency;
-    }
-
-    public int getIssueNumber() {
-        return issueNumber;
-    }
-
-    public void setIssueNumber(int issueNumber) {
-        this.issueNumber = issueNumber;
+    @Override
+    public String getSubType() {
+        return subType;
     }
 
     @Override
@@ -98,10 +72,7 @@ public class Magazine extends LendingMaterial {
                 doc.getBoolean("Available"),
                 doc.getString("CheckedOutDate"),
                 doc.getString("CheckedOutBy"),
-                doc.getInteger("CopiesAvailable"),
-                doc.getString("Genre"),
-                doc.getString("Frequency"),
-                doc.getInteger("IssueNumber")
+                doc.getInteger("CopiesAvailable")
         );
     }
 }

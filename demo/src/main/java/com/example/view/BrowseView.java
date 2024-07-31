@@ -36,7 +36,7 @@ public class BrowseView extends JFrame {
         JLabel userInfoLabel = new JLabel("Welcome, " + user.getName());
         add(userInfoLabel, BorderLayout.NORTH);
 
-        String[] columnNames = {"Title", "Author"};
+        String[] columnNames = {"Title", "Author", "Type", "Copies Available"};
         tableModel = new DefaultTableModel(columnNames, 0);
         itemTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(itemTable);
@@ -57,7 +57,8 @@ public class BrowseView extends JFrame {
     public void setItems(List<LendingMaterial> items) {
         tableModel.setRowCount(0); // Clear existing data
         for (LendingMaterial item : items) {
-                String[] data = {item.getTitle(), item.getAuthor()};
+                String[] data = {item.getTitle(), 
+                    item.getAuthor(), item.getSubType(), String.valueOf(item.getCopiesAvailable())};
                 tableModel.addRow(data);
         } 
     }
@@ -115,7 +116,8 @@ public class BrowseView extends JFrame {
 
     private void populateTable(List<LendingMaterial> items) {
         for (LendingMaterial item : items) {
-            String[] data = {item.getTitle(), item.getAuthor()};
+            String[] data = {item.getTitle(), item.getAuthor(), 
+                item.getSubType(), String.valueOf(item.getCopiesAvailable())};
             tableModel.addRow(data);
         }
     }

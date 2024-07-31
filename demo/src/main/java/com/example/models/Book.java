@@ -8,6 +8,7 @@ public class Book extends LendingMaterial {
     private String genre;
     private int height;
     private String publisher;
+    private String subType;
 
     // Default constructor
     public Book() {
@@ -28,6 +29,7 @@ public class Book extends LendingMaterial {
                 @JsonProperty("Height") int height,
                 @JsonProperty("Publisher") String publisher) {
         super(materialID, title, author, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
+        this.subType = "Book";
         this.genre = genre;
         this.height = height;
         this.publisher = publisher;
@@ -56,6 +58,11 @@ public class Book extends LendingMaterial {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    @Override
+    public String getSubType() {
+        return subType;
     }
 
     @Override

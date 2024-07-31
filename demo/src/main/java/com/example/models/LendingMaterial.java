@@ -28,7 +28,7 @@ public abstract class LendingMaterial {
     private String checkedOutDate;
     private String checkedOutBy;
     private int copiesAvailable;
-
+    
     // Default constructor
     public LendingMaterial() {
     }
@@ -142,4 +142,5 @@ public abstract class LendingMaterial {
     // Abstract methods to be implemented by subclasses
     public abstract void checkout(String user, String date);
     public abstract void returnMaterial();
+    public abstract String getSubType();
 }

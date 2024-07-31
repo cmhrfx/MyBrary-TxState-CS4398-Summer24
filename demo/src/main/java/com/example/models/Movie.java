@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Movie extends LendingMaterial {
+    private String subType;
     // Default constructor
     public Movie() {
         super();
@@ -21,6 +22,13 @@ public class Movie extends LendingMaterial {
                  @JsonProperty("CheckedOutBy") String checkedOutBy,
                  @JsonProperty("CopiesAvailable") int copiesAvailable) {
         super(materialID, title, author, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
+
+        this.subType = "Movie";
+    }   
+
+    @Override
+    public String getSubType() {
+        return subType;
     }
 
     @Override
