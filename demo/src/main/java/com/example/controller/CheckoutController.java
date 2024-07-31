@@ -65,6 +65,8 @@ public class CheckoutController {
             checkedOutItems.addAll(cart.getItems());
             account.setCheckedOutItems(checkedOutItems);
             accountDAO.updateAccount(account);
+            accountDAO.updateLendedItems(cart.getItems(), user.getAccountId());
+            System.out.println("CheckoutController:: updateAccount: account updated!");
         } else {
             System.out.println("CheckoutController:: updateAccount: account null!");
         }

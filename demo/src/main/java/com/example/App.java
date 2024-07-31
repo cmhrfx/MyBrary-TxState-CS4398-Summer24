@@ -7,6 +7,8 @@ import com.example.dao.UserDAO;
 import com.example.dao.UserDAOImpl;
 import com.example.dao.AccountDAO;
 import com.example.dao.AccountDAOImpl;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
@@ -14,6 +16,10 @@ import com.example.models.Cart;
 import com.example.view.LoginView;
 
 import javax.swing.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import org.bson.Document;
 
@@ -24,45 +30,43 @@ public class App {
     private static AccountDAO accountDAO;
 
     public static void main(String[] args) {
-        // Replace with your actual connection string and database name
+        // database connection parameters
         String connectionString = "mongodb+srv://chris:bobcats24@cluster0.qxcbrdu.mongodb.net/";
         String databaseName = "Library";
 
+        // DAO object instantiation
         dbConnection = new LibraryDatabaseConnection(connectionString, databaseName);
         userDAO = new UserDAOImpl(dbConnection);
         lendingMaterialDAO = new LendingMaterialDAOImpl(dbConnection);
         accountDAO = new AccountDAOImpl(dbConnection);
 
+        // Update OverDue Items
+        updateOverdueItems(accountDAO);
+
         // MAIN DEBUG
         MongoDatabase database = dbConnection.getDatabase();
-        
-        // ABLE TO FIND DATABASE?
         System.out.println("Database found: " + (database != null));
-        
-        // ABLE TO FIND USERS COLLECTION?
         boolean usersCollectionExists = collectionExists(database, "Users");
         System.out.println("Users collection exists: " + usersCollectionExists);
-
-        // TEST USER CASE
-        Document doc = database.getCollection("Users").find(Filters.eq("UserID", "0")).first();
+        Document doc = database.getCollection("Users")
+                        .find(Filters.eq("UserID", "0")).first();
         if(doc != null)
         {
             System.out.println("Found test user");
         } else {
             System.out.println("Failed to find test user");
         }
-
-        // ABLE TO FIND ACCOUNTS COLLECTION?
         boolean accountsCollectionExists = collectionExists(database, "Accounts");
         System.out.println("Accounts collection exists: " + accountsCollectionExists);
-
-        // ABLE TO FIND LENDINGMATERIAL COLLECTION?
-        boolean lendingMaterialCollectionExists = collectionExists(database, "LendingMaterial");
-        System.out.println("LendingMaterial collection exists: " + lendingMaterialCollectionExists);
-
-        // ABLE TO FIND LIBRARYCARDS COLLECTION?
-        boolean libraryCardsCollectionExists = collectionExists(database, "LibraryCards");
+        boolean lendingMaterialCollectionExists = 
+                collectionExists(database, "LendingMaterial");
+        System.out.println
+                ("LendingMaterial collection exists: " + lendingMaterialCollectionExists);
+        boolean libraryCardsCollectionExists = 
+                collectionExists(database, "LibraryCards");
         System.out.println("LibraryCards collection exists: " + libraryCardsCollectionExists);
+
+        // END OF DEBUG
 
         // Initialize the Cart
         Cart cart = new Cart();
@@ -87,4 +91,29 @@ public class App {
         }
         return false;
     }
+
+    public static void updateOverdueItems(AccountDAO accountDAO) {
+
+        // Get today's date
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate today = LocalDate.now();
+
+        // Find all lended items
+        List<Document> lendedItems = accountDAO.getAllLendedItems();
+
+        for (Document item : lendedItems) {
+            String returnDateStr = item.getString("ReturnDate");
+
+            if (returnDateStr != null && !returnDateStr.isEmpty()) {
+                LocalDate returnDate = LocalDate.parse(returnDateStr, formatter);
+                long daysOverdue = ChronoUnit.DAYS.between(returnDate, today);
+
+                if (daysOverdue > 0) {
+                    // Update the DaysOverdue field
+                    accountDAO.updateLendedItemDaysOverdue(item, daysOverdue);
+                }
+            }
+        }
+    }
+
 }

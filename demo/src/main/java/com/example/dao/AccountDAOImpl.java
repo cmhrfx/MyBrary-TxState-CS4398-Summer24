@@ -2,10 +2,16 @@ package com.example.dao;
 
 import com.example.LibraryDatabaseConnection;
 import com.example.models.Account;
+import com.example.models.LendingMaterial;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import com.mongodb.client.model.Filters;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AccountDAOImpl implements AccountDAO {
     private MongoDatabase database;
@@ -14,13 +20,17 @@ public class AccountDAOImpl implements AccountDAO {
         this.database = connection.getDatabase();
     }
 
-    private MongoCollection<Document> getCollection() {
+    private MongoCollection<Document> getAccountsCollection() {
         return database.getCollection("Accounts");
+    }
+
+    private MongoCollection<Document> getLendedItemsCollection() {
+        return database.getCollection("LendedItems");
     }
 
     @Override
     public Account getAccountById(String accountId) {
-        Document doc = getCollection().find(Filters.eq("AccountID", accountId)).first();
+        Document doc = getAccountsCollection().find(Filters.eq("AccountID", accountId)).first();
         if (doc != null) {
             return Account.fromDocument(doc);
         }
@@ -29,16 +39,50 @@ public class AccountDAOImpl implements AccountDAO {
 
     @Override
     public void insertAccount(Account account) {
-        getCollection().insertOne(account.toDocument());
+        getAccountsCollection().insertOne(account.toDocument());
     }
 
     @Override
     public void updateAccount(Account account) {
-        getCollection().updateOne(Filters.eq("AccountID", account.getAccountId()), new Document("$set", account.toDocument()));
+        getAccountsCollection().updateOne(Filters.eq("AccountID", account.getAccountId()), new Document("$set", account.toDocument()));
     }
 
     @Override
     public void deleteAccount(int accountId) {
-        getCollection().deleteOne(Filters.eq("AccountID", accountId));
+        getAccountsCollection().deleteOne(Filters.eq("AccountID", accountId));
+    }
+
+    @Override
+    public void updateLendedItems(List<LendingMaterial> items, String accountId) {
+        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        
+        for (LendingMaterial item : items) {
+            Document lendedItemDoc = new Document("MaterialID", item.getMaterialID())
+                .append("AccountID", accountId)
+                .append("LendedDate", currentDate.format(formatter))
+                .append("ReturnDate", "")
+                .append("LastOverDueCheck", "")
+                .append("DaysOverdue", 0);
+            lendedItemsCollection.insertOne(lendedItemDoc);
+        }
+    }
+
+    @Override
+    public List<Document> getAllLendedItems() {
+        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+        List<Document> lendedItems = new ArrayList<>();
+        lendedItemsCollection.find().into(lendedItems);
+        return lendedItems;
+    }
+
+    @Override
+    public void updateLendedItemDaysOverdue(Document item, long daysOverdue) {
+        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+        lendedItemsCollection.updateOne(
+            Filters.eq("_id", item.getObjectId("_id")),
+            new Document("$set", new Document("DaysOverdue", daysOverdue))
+        );
     }
 }
