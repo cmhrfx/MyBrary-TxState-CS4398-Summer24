@@ -85,26 +85,23 @@ public class Journal extends LendingMaterial {
     // Convert to MongoDB Document
     @Override
     public Document toDocument() {
-        return super.toDocument()
-                .append("volume", volume)
-                .append("issue", issue)
-                .append("pages", pages);
+        return super.toDocument();
     }
 
     // Convert from MongoDB Document
     public static Journal fromDocument(Document doc) {
         return new Journal(
-                doc.getString("materialID"),
-                doc.getString("title"),
-                doc.getString("author"),
-                doc.getString("type"),
-                doc.getBoolean("available"),
-                doc.getString("checkedOutDate"),
-                doc.getString("checkedOutBy"),
-                doc.getInteger("copiesAvailable"),
-                doc.getString("volume"),
-                doc.getString("issue"),
-                doc.getInteger("pages")
+                doc.getString("MaterialID"),
+                doc.getString("Title"),
+                doc.getString("Author"),
+                doc.getString("Type"),
+                doc.getBoolean("Available"),
+                doc.getString("CheckedOutDate"),
+                doc.getString("CheckedOutBy"),
+                doc.getInteger("CopiesAvailable"),
+                doc.getString("Volume"),
+                doc.getString("Issue"),
+                doc.getInteger("Pages")
         );
     }
 }

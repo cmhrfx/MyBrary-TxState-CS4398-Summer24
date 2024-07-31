@@ -95,20 +95,33 @@ public class Account {
                                       doc.getString("UserID"),
                                       doc.getString("Type"),
                                       doc.getDouble("Balance").doubleValue());
-
+    
         List<Document> checkedOutItemsDocs = (List<Document>) doc.get("CheckedOutItems");
         List<LendingMaterial> checkedOutItems = new ArrayList<>();
         for (Document itemDoc : checkedOutItemsDocs) {
-            LendingMaterial item;
-            if ("Book".equals(itemDoc.getString("Type"))) {
-                item = Book.fromDocument(itemDoc);
-            } else if ("Movie".equals(itemDoc.getString("Type"))) {
-                item = Movie.fromDocument(itemDoc);
+            LendingMaterial item = null;
+            String type = itemDoc.getString("Type");
+            
+            if (type != null) {
+                switch (type) {
+                    case "Book":
+                        item = Book.fromDocument(itemDoc);
+                        break;
+                    case "Movie":
+                        item = Movie.fromDocument(itemDoc);
+                        break;
+                    // add cases for other types if needed
+                    default:
+                        System.err.println("Unknown type: " + type);
+                        break;
+                }
             } else {
-                // handle other types or throw an exception
-                throw new IllegalArgumentException("Unknown type: " + itemDoc.getString("Type"));
+                System.err.println("Type is null in document: " + itemDoc);
             }
-            checkedOutItems.add(item);
+            
+            if (item != null) {
+                checkedOutItems.add(item);
+            }
         }
         account.setCheckedOutItems(checkedOutItems);
         return account;

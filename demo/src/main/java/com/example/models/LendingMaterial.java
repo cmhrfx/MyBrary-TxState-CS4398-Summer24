@@ -129,14 +129,14 @@ public abstract class LendingMaterial {
     }
 
     public Document toDocument() {
-        return new Document("materialID", materialID)
-                .append("title", title)
-                .append("author", author)
-                .append("type", type)
-                .append("available", available)
-                .append("checkedOutDate", checkedOutDate)
-                .append("checkedOutBy", checkedOutBy)
-                .append("copiesAvailable", copiesAvailable);
+        return new Document("MaterialID", materialID)
+                .append("Title", title)
+                .append("Author", author)
+                .append("Type", type)
+                .append("Available", available)
+                .append("CheckedOutDate", checkedOutDate)
+                .append("CheckedOutBy", checkedOutBy)
+                .append("CopiesAvailable", copiesAvailable);
     }
 
     // Abstract methods to be implemented by subclasses

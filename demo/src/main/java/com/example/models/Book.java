@@ -86,25 +86,25 @@ public class Book extends LendingMaterial {
     @Override
     public Document toDocument() {
         return super.toDocument()
-                .append("genre", genre)
-                .append("height", height)
-                .append("publisher", publisher);
+                .append("Genre", genre)
+                .append("Height", height)
+                .append("Publisher", publisher);
     }
 
     // Convert from MongoDB Document
     public static Book fromDocument(Document doc) {
         return new Book(
-                doc.getString("materialID"),
-                doc.getString("title"),
-                doc.getString("author"),
-                doc.getString("type"),
-                doc.getBoolean("available"),
-                doc.getString("checkedOutDate"),
-                doc.getString("checkedOutBy"),
-                doc.getInteger("copiesAvailable"),
-                doc.getString("genre"),
-                doc.getInteger("height"),
-                doc.getString("publisher")
+                doc.getString("MaterialID"),
+                doc.getString("Title"),
+                doc.getString("Author"),
+                doc.getString("Type"),
+                doc.getBoolean("Available"),
+                doc.getString("CheckedOutDate"),
+                doc.getString("CheckedOutBy"),
+                doc.getInteger("CopiesAvailable"),
+                doc.getString("Genre"),
+                doc.getInteger("Height"),
+                doc.getString("Publisher")
         );
     }
 }

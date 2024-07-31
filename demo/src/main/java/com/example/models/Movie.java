@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Movie extends LendingMaterial {
-    private String genre;
-    private int duration; // duration in minutes
-
     // Default constructor
     public Movie() {
         super();
@@ -22,29 +19,8 @@ public class Movie extends LendingMaterial {
                  @JsonProperty("Available") boolean available,
                  @JsonProperty("CheckedOutDate") String checkedOutDate,
                  @JsonProperty("CheckedOutBy") String checkedOutBy,
-                 @JsonProperty("CopiesAvailable") int copiesAvailable,
-                 @JsonProperty("Genre") String genre,
-                 @JsonProperty("Duration") int duration) {
+                 @JsonProperty("CopiesAvailable") int copiesAvailable) {
         super(materialID, title, author, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
-        this.genre = genre;
-        this.duration = duration;
-    }
-
-    // Getters and setters
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 
     @Override
@@ -74,24 +50,20 @@ public class Movie extends LendingMaterial {
     // Convert to MongoDB Document
     @Override
     public Document toDocument() {
-        return super.toDocument()
-                .append("genre", genre)
-                .append("duration", duration);
+        return super.toDocument();
     }
 
     // Convert from MongoDB Document
     public static Movie fromDocument(Document doc) {
         return new Movie(
-                doc.getString("materialID"),
-                doc.getString("title"),
-                doc.getString("author"),
-                doc.getString("type"),
-                doc.getBoolean("available"),
-                doc.getString("checkedOutDate"),
-                doc.getString("checkedOutBy"),
-                doc.getInteger("copiesAvailable"),
-                doc.getString("genre"),
-                doc.getInteger("duration")
+                doc.getString("MaterialID"),
+                doc.getString("Title"),
+                doc.getString("Author"),
+                doc.getString("Type"),
+                doc.getBoolean("Available"),
+                doc.getString("CheckedOutDate"),
+                doc.getString("CheckedOutBy"),
+                doc.getInteger("CopiesAvailable")
         );
     }
 }
