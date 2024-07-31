@@ -28,7 +28,7 @@ public class BrowseController {
         this.view = view;
         this.checkoutView = checkoutView;
         this.loginView = loginView;
-        this.user = user;
+        this.user = User.getInstance();
         this.lendingMaterialDAO = lendingMaterialDAO;
         this.accountDAO = accountDAO;
         this.cart = cart;

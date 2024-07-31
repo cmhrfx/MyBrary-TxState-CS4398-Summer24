@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
+    private static User instance;
+
     private String userId;
     private String accountId;
     private String name;
@@ -15,28 +17,16 @@ public class User {
     private String libraryCardNumber;
     private String type;
 
-    // Default constructor
-    public User() {
+    // Private constructor to prevent instantiation
+    private User() {
     }
 
-    // Parameterized constructor
-    @JsonCreator
-    public User(@JsonProperty("UserID") String userId,
-                @JsonProperty("AccountID") String accountId,
-                @JsonProperty("Name") String name,
-                @JsonProperty("Age") int age,
-                @JsonProperty("Address") String address,
-                @JsonProperty("Password") String password,
-                @JsonProperty("LibraryCardNumber") String libraryCardNumber,
-                @JsonProperty("Type") String type) {
-        this.userId = userId;
-        this.accountId = accountId;
-        this.name = name;
-        this.age = age;
-        this.address = address;
-        this.password = password;
-        this.libraryCardNumber = libraryCardNumber;
-        this.type = type;
+    // Singleton getInstance method
+    public static User getInstance() {
+        if (instance == null) {
+            instance = new User();
+        }
+        return instance;
     }
 
     // Getters and setters
@@ -103,5 +93,4 @@ public class User {
     public void setType(String type) {
         this.type = type;
     }
-    
 }

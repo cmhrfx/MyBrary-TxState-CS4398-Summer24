@@ -24,7 +24,7 @@ public class CheckoutView extends JFrame {
     private JButton confirmButton;
 
     public CheckoutView(User user, Cart cart, AccountDAO accountDAO) {
-        this.user = user;
+        this.user = User.getInstance();
         this.cart = cart;
         this.accountDAO = accountDAO;
         initializeUI();

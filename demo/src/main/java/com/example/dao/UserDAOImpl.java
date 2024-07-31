@@ -78,4 +78,40 @@ public class UserDAOImpl implements UserDAO {
             return null;
         }
     }
+
+    @Override
+    public String getUserAccountId(String userId) {
+        Document doc = getCollection().find(Filters.eq("UserID", userId)).first();
+        return (doc != null) ? doc.getString("AccountID") : null;
+    }
+
+    @Override
+    public String getUserName(String userId) {
+        Document doc = getCollection().find(Filters.eq("UserID", userId)).first();
+        return (doc != null) ? doc.getString("Name") : null;
+    }
+
+    @Override
+    public int getUserAge(String userId) {
+        Document doc = getCollection().find(Filters.eq("UserID", userId)).first();
+        return (doc != null) ? doc.getInteger("Age") : -1;
+    }
+
+    @Override
+    public String getUserAddress(String userId) {
+        Document doc = getCollection().find(Filters.eq("UserID", userId)).first();
+        return (doc != null) ? doc.getString("Address") : null;
+    }
+
+    @Override
+    public String getUserLibraryCardNumber(String userId) {
+        Document doc = getCollection().find(Filters.eq("UserID", userId)).first();
+        return (doc != null) ? doc.getString("LibraryCardNumber") : null;
+    }
+
+    @Override
+    public String getUserType(String userId) {
+        Document doc = getCollection().find(Filters.eq("UserID", userId)).first();
+        return (doc != null) ? doc.getString("Type") : null;
+    }
 }

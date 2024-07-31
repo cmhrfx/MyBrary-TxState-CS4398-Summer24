@@ -29,8 +29,7 @@ public class LoginController {
         this.cart = cart;
         this.loginView = loginView;
         this.browseView = browseView;
-        this.user = user;
-
+        this.user = User.getInstance();
 
         this.loginView.addLoginListener(new LoginListener());
     }
@@ -47,8 +46,8 @@ public class LoginController {
             boolean authenticated = userDAO.authenticateUser(username, password);
             if (authenticated) {
                 System.out.println("User authenticated: " + username);
-                loginView.dispose();
-                user = userDAO.getUserById(username); // Assuming username is the user ID
+                updateUserFromDB(username, password);
+                
                 System.out.println("UserID: " + user.getUserId());
                 System.out.println("AccountID: " + user.getAccountId());
                 System.out.println("Name: " + user.getName());
@@ -60,11 +59,22 @@ public class LoginController {
 
                 loginView.setVisible(false);
                 browseView.setVisible(true);
-
+                browseView.debug();
             } else {
                 System.out.println("Authentication failed for user: " + username);
                 loginView.showError("Invalid username or password.");
             }
+        }
+
+        private void updateUserFromDB(String username, String password) {
+            user.setUserId(username);
+            user.setAccountId(userDAO.getUserAccountId(username));
+            user.setName(userDAO.getUserName(username));
+            user.setAge(userDAO.getUserAge(username));
+            user.setAddress(userDAO.getUserAddress(username));
+            user.setPassword(password);
+            user.setLibraryCard(userDAO.getUserLibraryCardNumber(username));
+            user.setType(userDAO.getUserType(username));
         }
     }
 }

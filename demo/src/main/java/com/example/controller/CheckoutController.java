@@ -26,7 +26,7 @@ public class CheckoutController {
         this.browseView = browseView;
         this.view = view;
         this.cart = cart;
-        this.user = user;
+        this.user = User.getInstance();
         this.accountDAO = accountDAO;
 
         setupListeners();

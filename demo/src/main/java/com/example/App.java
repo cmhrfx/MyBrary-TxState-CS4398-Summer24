@@ -81,8 +81,16 @@ public class App {
         Cart cart = new Cart();
         System.out.println("Cart initialized: " + (cart != null));
 
-        // define dummy user
-        user = new User("0", "0", "guest", 18, "guest", "guest", "guest", "guest");
+        // initialize the user
+        user = User.getInstance();
+        user.setUserId("-1");
+        user.setAccountId("0");
+        user.setName("guest");
+        user.setAge(18);
+        user.setAddress("guest");
+        user.setPassword("guest");
+        user.setLibraryCard("guest");
+        user.setType("guest");
 
         // Initialize the views
         LoginView loginView = new LoginView();

@@ -23,7 +23,7 @@ public class BrowseView extends JFrame {
     private LendingMaterialDAO lendingMaterialDAO;
 
     public BrowseView(User user, Cart cart, LendingMaterialDAO lendingMaterialDAO) {  // Constructor should accept Cart as a parameter
-        this.user = user;
+        this.user = User.getInstance();
         this.cart = cart;
         this.lendingMaterialDAO = lendingMaterialDAO;
 
@@ -109,6 +109,10 @@ public class BrowseView extends JFrame {
 
     public void addCheckoutListener(ActionListener listener) {
         checkoutButton.addActionListener(listener);
+    }
+
+    public void debug(){
+        System.out.println("BrowseView:: User: " + user.getName());
     }
 
 }
