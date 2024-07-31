@@ -57,12 +57,13 @@ public class AccountDAOImpl implements AccountDAO {
         MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        
+        LocalDate returnDate = currentDate.plusWeeks(3);
+
         for (LendingMaterial item : items) {
             Document lendedItemDoc = new Document("MaterialID", item.getMaterialID())
                 .append("AccountID", accountId)
                 .append("LendedDate", currentDate.format(formatter))
-                .append("ReturnDate", "")
+                .append("ReturnDate", returnDate.format(formatter))
                 .append("LastOverDueCheck", "")
                 .append("DaysOverdue", 0);
             lendedItemsCollection.insertOne(lendedItemDoc);

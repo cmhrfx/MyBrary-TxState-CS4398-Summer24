@@ -93,7 +93,6 @@ public class App {
     }
 
     public static void updateOverdueItems(AccountDAO accountDAO) {
-
         // Get today's date
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate today = LocalDate.now();
