@@ -5,6 +5,8 @@ import com.example.models.Book;
 import com.example.models.Cart;
 import com.example.models.LendingMaterial;
 import com.example.models.Movie;
+import com.example.models.Journal;
+import com.example.models.Magazine;
 import com.example.models.User;
 
 import javax.swing.*;
@@ -83,8 +85,18 @@ public class BrowseView extends JFrame {
                         System.out.println("Returning Movie!");
                         return movie;
                     }
-                } else {
-                    System.out.println("Not a book or movie!");
+                } else if (item instanceof Journal) {
+                    Journal journal = (Journal) item;
+                    if (journal.getTitle().equals(title) && journal.getAuthor().equals(author)) {
+                        System.out.println("Not a book or movie!");
+                        return journal;
+                    }
+                } else if (item instanceof Magazine) {
+                    Magazine magazine = (Magazine) item;
+                    if (magazine.getTitle().equals(title) && magazine.getAuthor().equals(author)) {
+                        System.out.println("Not a book or movie!");
+                        return magazine;
+                    }
                 }
             }
         }
