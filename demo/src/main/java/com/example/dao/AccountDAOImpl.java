@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -106,19 +107,30 @@ public class AccountDAOImpl implements AccountDAO {
         );
     }
 
-    public boolean returnLendedItem(String materialID, String accountID) {
-        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
-        Document foundItem = lendedItemsCollection.find(Filters.and(
-            Filters.eq("MaterialID", materialID),
-            Filters.eq("AccountID", accountID)
-        )).first();
+public boolean returnLendedItem(String materialID, String accountID) {
+    MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+    MongoCollection<Document> accountsCollection = getAccountsCollection();
+
+    // Find and delete the item in the LendedItems collection
+    Document foundItem = lendedItemsCollection.find(Filters.and(
+        Filters.eq("MaterialID", materialID),
+        Filters.eq("AccountID", accountID)
+    )).first();
     
-        if (foundItem != null) {
-            lendedItemsCollection.deleteOne(foundItem);
-            return true;
-        }
-        return false;
+    if (foundItem != null) {
+        lendedItemsCollection.deleteOne(foundItem);
+
+        // Now, remove the item from the CheckedOutItems array in the Accounts collection
+        accountsCollection.updateOne(
+            Filters.eq("AccountID", accountID),
+            Updates.pull("CheckedOutItems", new Document("MaterialID", materialID))
+        );
+
+        return true;
     }
+    return false;
+}
+
 
 
 }

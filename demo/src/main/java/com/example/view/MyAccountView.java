@@ -79,6 +79,7 @@ public class MyAccountView extends JFrame {
             }
 
             String[] data = {
+                item.getMaterialID(),
                 item.getTitle(),
                 item.getAuthor(),
                 item.getSubType(),
