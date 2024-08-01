@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Magazine extends LendingMaterial {
     private String subType;
+    private static final double DEFAULT_VALUE = 5.0;
 
     // Default constructor
     public Magazine() {
@@ -23,6 +24,11 @@ public class Magazine extends LendingMaterial {
         super(materialID, title, author, type, test, copiesAvailable);
 
         this.subType = "Magazine";
+    }
+
+    @Override
+    public double getValue() {
+        return DEFAULT_VALUE;
     }
 
     @Override

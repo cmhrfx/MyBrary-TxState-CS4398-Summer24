@@ -1,10 +1,13 @@
 package com.example.dao;
 
 import com.example.LibraryDatabaseConnection;
+import com.example.dao.LendingMaterialDAO;
 import com.example.models.Account;
 import com.example.models.LendingMaterial;
 import com.example.models.Book;
+import com.example.models.Journal;
 import com.example.models.LibraryCard;
+import com.example.models.Magazine;
 import com.example.models.Movie;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -14,9 +17,14 @@ import com.mongodb.client.model.Updates;
 import com.mongodb.client.result.UpdateResult;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import org.bson.types.ObjectId;
+
 
 public class AccountDAOImpl implements AccountDAO {
     private MongoDatabase database;
@@ -31,6 +39,10 @@ public class AccountDAOImpl implements AccountDAO {
 
     private MongoCollection<Document> getLendedItemsCollection() {
         return database.getCollection("LendedItems");
+    }
+
+    private MongoCollection<Document> getLendingMaterialsCollection() {
+        return database.getCollection("LendingMaterials");
     }
 
     private MongoCollection<Document> getReservationsCollection() {
@@ -76,9 +88,10 @@ public class AccountDAOImpl implements AccountDAO {
                 .append("AccountID", accountId)
                 .append("LendedDate", currentDate.format(formatter))
                 .append("ReturnDate", returnDate.format(formatter))
-                .append("LastBalanceUpdate", "")
+                .append("LastFeeAccruedDate", "")
                 .append("BeenRenewed", false)
-                .append("DaysOverdue", 0);
+                .append("FeeAccrued", 0.0)
+                .append("DaysOverDue", 0);
             lendedItemsCollection.insertOne(lendedItemDoc);
         }
     }
@@ -278,6 +291,92 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     @Override
+    public void setAccountBalance(String accountId, double amount) {
+        MongoCollection<Document> accountsCollection = getAccountsCollection();
+        accountsCollection.updateOne(
+            Filters.eq("AccountID", accountId),
+            new Document("$set", new Document("Balance", amount))
+        );
+    }
+
+
+    @Override
+    public void updateLendedItemFees() {
+        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+        if (lendedItemsCollection != null) {
+            System.out.println("Lended items Collection Found!");
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate today = LocalDate.now();
+    
+        lendedItemsCollection.find().forEach((Consumer<Document>) item -> {
+            LocalDate returnDate = LocalDate.parse(item.getString("ReturnDate"), formatter);
+            int daysOverdue = (int) ChronoUnit.DAYS.between(returnDate, today);
+            
+            String lastFeeAccruedDateStr = item.getString("LastFeeAccruedDate");
+            LocalDate lastFeeAccruedDate = lastFeeAccruedDateStr.isEmpty() ? returnDate : LocalDate.parse(lastFeeAccruedDateStr, formatter);
+            int daysSinceLastAccrued = (int) ChronoUnit.DAYS.between(lastFeeAccruedDate, today);
+    
+            String materialID = item.getString("MaterialID");
+            LendingMaterial lendingMaterial = getLendingMaterialById(materialID);
+            if (lendingMaterial == null) {
+                System.out.println("No lending material found for MaterialID: " + materialID);
+                return; // Skip to the next item if the material is not found
+            }
+    
+            // Skip fee accrual for Magazine and Journal
+            if (lendingMaterial instanceof Magazine || lendingMaterial instanceof Journal) {
+                System.out.println("Skipping fee accrual for: " + lendingMaterial.getTitle());
+                return;
+            }
+    
+            double itemValue = lendingMaterial.getValue();
+    
+            double currentFeeAccrued = item.getDouble("FeeAccrued");
+            double potentialIncrement = daysSinceLastAccrued * 0.10;
+            double newFeeAccrued = currentFeeAccrued + potentialIncrement;
+    
+            if (newFeeAccrued > itemValue) {
+                newFeeAccrued = itemValue;
+            }
+    
+            lendedItemsCollection.updateOne(Filters.eq("_id", item.getObjectId("_id")),
+                Updates.combine(
+                    Updates.set("DaysOverDue", daysOverdue),
+                    Updates.set("FeeAccrued", newFeeAccrued),
+                    Updates.set("LastFeeAccruedDate", today.format(formatter))
+                )
+            );
+        });
+    }
+    
+
+
+    @Override
+    public void updateAccountBalance() {
+        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+        MongoCollection<Document> accountsCollection = getAccountsCollection();
+    
+        accountsCollection.find().forEach((Consumer<Document>) account -> {
+            String accountId = account.getString("AccountID");
+            
+            // Find all lended items for this account
+            List<Document> lendedItems = lendedItemsCollection.find(Filters.eq("AccountID", accountId)).into(new ArrayList<>());
+            
+            // Sum the fees accrued for each lended item
+            double totalFees = lendedItems.stream()
+                .mapToDouble(item -> item.getDouble("FeeAccrued"))
+                .sum();
+            
+            // Update the account balance
+            accountsCollection.updateOne(Filters.eq("AccountID", accountId),
+                Updates.set("AccountBalance", totalFees)
+            );
+        });
+    }
+    
+
+    @Override
     public boolean returnLendedItem(String materialID, String accountID) {
         MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
         MongoCollection<Document> accountsCollection = getAccountsCollection();
@@ -311,5 +410,24 @@ public class AccountDAOImpl implements AccountDAO {
         return false;
     }
 
+    public LendingMaterial getLendingMaterialById(String materialID) {
+        Document doc = getLendingMaterialsCollection().find(Filters.eq("MaterialID", materialID)).first();
+        if (doc != null) {
+            String type = doc.getString("Type");
+            switch (type) {
+                case "Book":
+                    return Book.fromDocument(doc);
+                case "Movie":
+                    return Movie.fromDocument(doc);
+                case "Magazine":
+                    return Magazine.fromDocument(doc);
+                case "Journal":
+                    return Journal.fromDocument(doc);
+                default:
+                    throw new IllegalArgumentException("Unknown type: " + type);
+            }
+        }
+        return null;
+    }
     
 }

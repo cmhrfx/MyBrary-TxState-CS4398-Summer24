@@ -31,10 +31,6 @@ public abstract class LendingMaterial {
     private String type;
     private String test;
     private int copiesAvailable;
-    ////////////////////////////////
-    private LocalDate lendedDate;
-    private LocalDate returnDate;
-
 
     // Default constructor
     public LendingMaterial() {
@@ -57,30 +53,6 @@ public abstract class LendingMaterial {
     }
 
     // Getters and setters
-
-
-    ///////////////////////////////
-    // Getter and setter for lendedDate
-    public LocalDate getLendedDate() {
-        return lendedDate;
-    }
-
-    public void setLendedDate(String dateStr) {
-        if (dateStr != null) {
-            this.lendedDate = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        }
-    }
-
-    // Getter and setter for returnDate
-    public LocalDate getReturnDate() {
-        return returnDate;
-    }
-
-    public void setReturnDate(String dateStr) {
-        if (dateStr != null) {
-            this.returnDate = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        }
-    }
 
     public String getTest() {
         return test;
@@ -165,4 +137,5 @@ public abstract class LendingMaterial {
     public abstract void checkout(String user, String date);
     public abstract void returnMaterial();
     public abstract String getSubType();
+    public abstract double getValue();
 }

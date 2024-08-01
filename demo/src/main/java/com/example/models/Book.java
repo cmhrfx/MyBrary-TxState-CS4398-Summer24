@@ -73,8 +73,9 @@ public class Book extends LendingMaterial {
         this.bestSeller = bestSeller;
     }
 
+    @Override
     public double getValue() {
-        return value;
+        return this.value;
     }
 
     public void setValue(double value) {

@@ -15,7 +15,10 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
 import com.example.models.Account;
+import com.example.models.Book;
 import com.example.models.Cart;
+import com.example.models.LendingMaterial;
+import com.example.models.Movie;
 import com.example.models.User;
 import com.example.view.BrowseView;
 import com.example.view.LoginView;
@@ -52,9 +55,11 @@ public class App {
 
         // Update OverDue Items
         updateOverdueItems(accountDAO);
+        // accountDAO.updateLendedItemFees();
 
         // Update Account Balances
         updateAccountBalance(accountDAO);
+        // accountDAO.updateAccountBalance();
 
         // MAIN DEBUG
         MongoDatabase database = dbConnection.getDatabase();
@@ -147,30 +152,61 @@ public class App {
     public static void updateAccountBalance(AccountDAO accountDAO) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate today = LocalDate.now();
-    
+
         List<Document> lendedItems = accountDAO.getAllLendedItems();
-    
+
         for (Document item : lendedItems) {
             String returnDateStr = item.getString("ReturnDate");
             String lastBalanceUpdateStr = item.getString("LastBalanceUpdate");
-    
+
             if (returnDateStr != null && !returnDateStr.isEmpty()) {
                 LocalDate returnDate = LocalDate.parse(returnDateStr, formatter);
                 long daysOverdue = ChronoUnit.DAYS.between(returnDate, today);
-    
+
                 if (daysOverdue > 0) {
                     LocalDate lastBalanceUpdate = lastBalanceUpdateStr == null || lastBalanceUpdateStr.isEmpty()
                             ? returnDate : LocalDate.parse(lastBalanceUpdateStr, formatter);
                     long daysSinceLastUpdate = ChronoUnit.DAYS.between(lastBalanceUpdate, today);
-    
+
                     if (daysSinceLastUpdate > 0) {
                         String accountId = item.getString("AccountID");
-                        double overdueFee = daysSinceLastUpdate * 0.10;
-                        accountDAO.incrementAccountBalance(accountId, overdueFee);
-                        accountDAO.updateLendedItemLastBalanceUpdate(item, today);
+                        String materialId = item.getString("MaterialID");
+                        LendingMaterial lendingMaterial = lendingMaterialDAO.getLendingMaterialById(materialId);
+
+                        if (lendingMaterial != null) {
+                            if (lendingMaterial instanceof Book) {
+                                updateBookBalance((Book) lendingMaterial, daysSinceLastUpdate, accountId, accountDAO, item, today, daysOverdue);
+                            } else if (lendingMaterial instanceof Movie) {
+                                updateMovieBalance((Movie) lendingMaterial, daysSinceLastUpdate, accountId, accountDAO, item, today, daysOverdue);
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+
+    private static void updateBookBalance(Book book, long daysSinceLastUpdate, String accountId, AccountDAO accountDAO, Document item, LocalDate today, long daysOverdue) {
+        double overdueFee = daysSinceLastUpdate * 0.10;
+        double overallOverdueFee = overdueFee + daysOverdue * 0.10;
+        double maxFee = book.getValue();
+        if (overallOverdueFee > maxFee) {
+            accountDAO.setAccountBalance(accountId, maxFee);
+        } else {
+            accountDAO.incrementAccountBalance(accountId, overdueFee);
+        }
+        accountDAO.updateLendedItemLastBalanceUpdate(item, today);
+    }
+
+    private static void updateMovieBalance(Movie movie, long daysSinceLastUpdate, String accountId, AccountDAO accountDAO, Document item, LocalDate today, long daysOverdue) {
+        double overdueFee = daysSinceLastUpdate * 0.10;
+        double overallOverdueFee = overdueFee + daysOverdue * 0.10;
+        double maxFee = movie.getValue();
+        if (overallOverdueFee > maxFee) {
+            accountDAO.setAccountBalance(accountId, overallOverdueFee);
+        } else {
+            accountDAO.incrementAccountBalance(accountId, overdueFee);
+        }
+        accountDAO.updateLendedItemLastBalanceUpdate(item, today);
     }
 }

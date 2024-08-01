@@ -28,8 +28,9 @@ public class Movie extends LendingMaterial {
     }   
 
     // Getters and setters
+    @Override
     public double getValue() {
-        return value;
+        return this.value;
     }
 
     public void setValue(double value) {

@@ -94,10 +94,6 @@ public class LendingMaterialDAOImpl implements LendingMaterialDAO {
 
             ////////////////////////////////////
             LendingMaterial lendingMaterial = mapper.readValue(json, LendingMaterial.class);
-        
-            // Set dates using the new setter that parses the date string
-            lendingMaterial.setLendedDate(doc.getString("LendedDate"));
-            lendingMaterial.setReturnDate(doc.getString("ReturnDate"));
             
             return lendingMaterial;
     
