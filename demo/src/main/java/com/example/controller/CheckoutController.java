@@ -87,6 +87,7 @@ public class CheckoutController {
             List<LendingMaterial> checkedOutItems = account.getCheckedOutItems();
             System.out.println("CheckoutController:: updateAccount: items1: " + account.getCheckedOutItems());
             checkedOutItems.addAll(cart.getItems());
+            lendingMaterialDAO.decrementLendingMaterials(cart.getItems());
             System.out.println("CheckoutController:: updateAccount: items2: " + checkedOutItems);
             account.setCheckedOutItems(checkedOutItems);
             System.out.println("CheckoutController:: updateAccount: items3: " + account.getCheckedOutItems());

@@ -54,6 +54,17 @@ public class LendingMaterialDAOImpl implements LendingMaterialDAO {
         getCollection().deleteOne(Filters.eq("MaterialID", id));
     }
 
+    @Override
+    public void decrementLendingMaterials(List<LendingMaterial> lendingMaterials) {
+        for (LendingMaterial item : lendingMaterials) {
+            item.setCopiesAvailable(item.getCopiesAvailable() - 1);
+            getCollection().updateOne(
+                Filters.eq("MaterialID", item.getMaterialID()),
+                new Document("$set", new Document("CopiesAvailable", item.getCopiesAvailable()))
+            );
+        }
+    }
+
     private Document toDocument(LendingMaterial lendingMaterial) {
         ObjectMapper mapper = new ObjectMapper();
         try {
