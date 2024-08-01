@@ -95,7 +95,11 @@ public class App {
 
         // Initialize the views
         LoginView loginView = new LoginView();
-        BrowseView browseView = new BrowseView(user, cart, lendingMaterialDAO);
+        ///////////////////////////////////////////
+        AccountDAO accountDAO = new AccountDAOImpl(dbConnection);
+        BrowseView browseView = new BrowseView(user, cart, lendingMaterialDAO, accountDAO);  // Now passing accountDAO too
+        /////////////////
+        
         CheckoutView checkoutView = new CheckoutView(user, cart, accountDAO);
 
         // Initialize the login controller

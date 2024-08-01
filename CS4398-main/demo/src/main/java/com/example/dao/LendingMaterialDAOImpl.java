@@ -69,7 +69,19 @@ public class LendingMaterialDAOImpl implements LendingMaterialDAO {
         ObjectMapper mapper = new ObjectMapper();
         try {
             String json = doc.toJson();
-            return mapper.readValue(json, LendingMaterial.class);
+
+
+            ////////////////////////////////////
+            LendingMaterial lendingMaterial = mapper.readValue(json, LendingMaterial.class);
+        
+            // Set dates using the new setter that parses the date string
+            lendingMaterial.setLendedDate(doc.getString("LendedDate"));
+            lendingMaterial.setReturnDate(doc.getString("ReturnDate"));
+            
+            return lendingMaterial;
+    
+
+            //return mapper.readValue(json, LendingMaterial.class);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

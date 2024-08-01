@@ -1,6 +1,8 @@
 package com.example.view;
 
+import com.example.dao.AccountDAO;
 import com.example.dao.LendingMaterialDAO;
+import com.example.models.Account;
 import com.example.models.Book;
 import com.example.models.Cart;
 import com.example.models.LendingMaterial;
@@ -22,9 +24,58 @@ public class BrowseView extends JFrame {
     private User user;
     private JButton addButton;
     private JButton checkoutButton;
+    private AccountDAO accountDAO;  // Add this line
+
+    ////////CHATGPT -CHANGES YOU GAVE
+    private JButton myAccountButton;
+//////////////
+
     private LendingMaterialDAO lendingMaterialDAO;
     private JLabel userInfoLabel;
 
+    public BrowseView(User user, Cart cart, LendingMaterialDAO lendingMaterialDAO, AccountDAO accountDAO) {  // Add AccountDAO as a parameter
+        this.user = User.getInstance();  // Assuming this should actually use the passed 'user' parameter
+        this.cart = cart;
+        this.lendingMaterialDAO = lendingMaterialDAO;
+        this.accountDAO = accountDAO;  // Initialize the DAO
+
+        initializeUI();
+    }
+
+    private void initializeUI() {
+        setTitle("Browse Items");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(600, 400);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        userInfoLabel = new JLabel("Welcome, " + user.getName());
+        add(userInfoLabel, BorderLayout.NORTH);
+
+        String[] columnNames = {"Title", "Author", "Type", "Copies Available"};
+        tableModel = new DefaultTableModel(columnNames, 0);
+        itemTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(itemTable);
+        add(scrollPane, BorderLayout.CENTER);
+
+        JPanel panel = new JPanel();
+        addButton = new JButton("Add to Cart");
+        checkoutButton = new JButton("Checkout");
+        myAccountButton = new JButton("My Account");
+        panel.add(addButton);
+        panel.add(checkoutButton);
+        panel.add(myAccountButton);
+
+        add(panel, BorderLayout.SOUTH);
+
+        populateTable(lendingMaterialDAO.getAllLendingMaterials());
+
+        myAccountButton.addActionListener(e -> displayMyAccountGUI());
+    }
+
+
+
+/* 
     public BrowseView(User user, Cart cart, LendingMaterialDAO lendingMaterialDAO) {  // Constructor should accept Cart as a parameter
         this.user = User.getInstance();
         this.cart = cart;
@@ -48,13 +99,21 @@ public class BrowseView extends JFrame {
         JPanel panel = new JPanel();
         addButton = new JButton("Add to Cart");
         checkoutButton = new JButton("Checkout");
+
+
+        /////////////////////CHATGPT -CHANGES YOU GAVE
+        myAccountButton = new JButton("My Account");
+        panel.add(myAccountButton);
+        myAccountButton.addActionListener(e -> displayMyAccountGUI());
+///////////////////////////
+
         panel.add(addButton);
         panel.add(checkoutButton);
         add(panel, BorderLayout.SOUTH);
 
         populateTable(lendingMaterialDAO.getAllLendingMaterials());
     }
-
+*/
     public void setItems(List<LendingMaterial> items) {
         tableModel.setRowCount(0); // Clear existing data
         for (LendingMaterial item : items) {
@@ -111,6 +170,14 @@ public class BrowseView extends JFrame {
             tableModel.addRow(data);
         }
     }
+
+    ///////////////////////////CHATGPT -CHANGES YOU GAVE
+    private void displayMyAccountGUI() {
+        Account account = accountDAO.getAccountById(user.getAccountId());
+        new MyAccountView(account, accountDAO).setVisible(true);
+    }
+///////////////////////////////////
+
 
     public void displayMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
