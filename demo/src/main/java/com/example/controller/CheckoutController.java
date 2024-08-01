@@ -45,6 +45,9 @@ public class CheckoutController {
             view.clearCart();
             view.displayMessage("Checkout confirmed! Thank you for your purchase.");
             view.setVisible(false);
+            List<LendingMaterial> updatedItemList = lendingMaterialDAO.getAllLendingMaterials();
+            browseView.populateTable(updatedItemList);
+            browseView.setItems(updatedItemList);
             browseView.setVisible(true);
         } else {
             view.displayMessage("You do not qualify to checkout this number of items.");

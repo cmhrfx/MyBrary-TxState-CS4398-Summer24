@@ -167,7 +167,7 @@ public class BrowseView extends JFrame {
         return null;
     }
 
-    private void populateTable(List<LendingMaterial> items) {
+    public void populateTable(List<LendingMaterial> items) {
         for (LendingMaterial item : items) {
             String[] data = {item.getTitle(), item.getAuthor(), 
                 item.getSubType(), String.valueOf(item.getCopiesAvailable())};
