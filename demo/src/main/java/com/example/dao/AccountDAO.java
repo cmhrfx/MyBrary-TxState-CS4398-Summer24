@@ -17,4 +17,6 @@ public interface AccountDAO {
     void updateLendedItemDaysOverdue(Document item, long daysOverdue);
     void updateLendedItemLastBalanceUpdate(Document item, LocalDate lastBalanceUpdate);
     void incrementAccountBalance(String accountId, double amount);
+    boolean returnLendedItem(String materialID, String accountID);
+
 }

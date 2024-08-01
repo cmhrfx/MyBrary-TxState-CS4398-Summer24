@@ -106,4 +106,19 @@ public class AccountDAOImpl implements AccountDAO {
         );
     }
 
+    public boolean returnLendedItem(String materialID, String accountID) {
+        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+        Document foundItem = lendedItemsCollection.find(Filters.and(
+            Filters.eq("MaterialID", materialID),
+            Filters.eq("AccountID", accountID)
+        )).first();
+    
+        if (foundItem != null) {
+            lendedItemsCollection.deleteOne(foundItem);
+            return true;
+        }
+        return false;
+    }
+
+
 }
