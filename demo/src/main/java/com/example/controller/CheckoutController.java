@@ -43,7 +43,8 @@ public class CheckoutController {
             updateAccountWithCheckedOutItems();
             cart.clearCart();
             view.displayMessage("Checkout confirmed! Thank you for your purchase.");
-            view.dispose();
+            view.setVisible(false);
+            browseView.setVisible(true);
         } else {
             view.displayMessage("You do not qualify to checkout this number of items.");
         }

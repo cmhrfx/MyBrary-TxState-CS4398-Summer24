@@ -45,6 +45,12 @@ public class BrowseController {
     private void setupListeners() {
         view.addAddToCartListener(e -> handleAddToCart());
         view.addCheckoutListener(e -> handleCheckout());
+        view.addLogoutListener(e -> handleLogout());
+    }
+
+    private void handleLogout(){
+        view.setVisible(false);
+        loginView.setVisible(true);
     }
 
     private void handleAddToCart() {

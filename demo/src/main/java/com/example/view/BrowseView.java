@@ -24,6 +24,7 @@ public class BrowseView extends JFrame {
     private User user;
     private JButton addButton;
     private JButton checkoutButton;
+    private JButton logoutButton;
     private AccountDAO accountDAO;  // Add this line
 
     ////////CHATGPT -CHANGES YOU GAVE
@@ -62,9 +63,12 @@ public class BrowseView extends JFrame {
         addButton = new JButton("Add to Cart");
         checkoutButton = new JButton("Checkout");
         myAccountButton = new JButton("My Account");
+        logoutButton = new JButton("Logout");
+        panel.add(logoutButton);
+        panel.add(myAccountButton);
         panel.add(addButton);
         panel.add(checkoutButton);
-        panel.add(myAccountButton);
+        
 
         add(panel, BorderLayout.SOUTH);
 
@@ -181,6 +185,10 @@ public class BrowseView extends JFrame {
 
     public void displayMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
+    }
+
+    public void addLogoutListener(ActionListener listener) {
+        logoutButton.addActionListener(listener);
     }
 
     public void addAddToCartListener(ActionListener listener) {
