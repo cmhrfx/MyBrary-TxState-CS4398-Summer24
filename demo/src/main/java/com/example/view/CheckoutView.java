@@ -9,9 +9,15 @@ import com.example.models.User;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import org.bson.Document;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.List;
+
+import java.time.LocalDate;
+
 
 public class CheckoutView extends JFrame {
     private AccountDAO accountDAO;
@@ -25,7 +31,7 @@ public class CheckoutView extends JFrame {
     private JLabel userInfoLabel;
 
     public CheckoutView(User user, Cart cart, AccountDAO accountDAO) {
-        this.user = User.getInstance();
+        this.user = user;
         this.cart = cart;
         this.accountDAO = accountDAO;
         initializeUI();
@@ -41,7 +47,7 @@ public class CheckoutView extends JFrame {
         userInfoLabel = new JLabel("User: " + user.getName() + " - Checkout");
         add(userInfoLabel, BorderLayout.NORTH);
 
-        String[] columnNames = {"Title", "Author"};
+        String[] columnNames = {"Title", "Author", "Best Seller", "Return Date"};
         tableModel = new DefaultTableModel(columnNames, 0);
         cartTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(cartTable);
@@ -73,16 +79,19 @@ public class CheckoutView extends JFrame {
 
     private void populateTable(List<LendingMaterial> items) {
         tableModel.setRowCount(0); // Clear existing data
+
         for (LendingMaterial item : items) {
+            String title = item.getTitle();
+            String author = item.getAuthor();
+            boolean isBestSeller = false;
+            LocalDate returnDate = accountDAO.getReturnDate(item);
+
             if (item instanceof Book) {
-                Book book = (Book) item;
-                String[] data = {book.getTitle(), book.getAuthor()};
-                tableModel.addRow(data);
-            } else if (item instanceof Movie) {
-                Movie movie = (Movie) item;
-                String[] data = {movie.getTitle(), movie.getAuthor()};
-                tableModel.addRow(data);
+                isBestSeller = ((Book) item).getBestSeller();
             }
+
+            Object[] rowData = {title, author, isBestSeller, returnDate};
+            tableModel.addRow(rowData);
         }
     }
 
