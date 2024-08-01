@@ -77,47 +77,6 @@ public class BrowseView extends JFrame {
         myAccountButton.addActionListener(e -> displayMyAccountGUI());
     }
 
-
-
-/* 
-    public BrowseView(User user, Cart cart, LendingMaterialDAO lendingMaterialDAO) {  // Constructor should accept Cart as a parameter
-        this.user = User.getInstance();
-        this.cart = cart;
-        this.lendingMaterialDAO = lendingMaterialDAO;
-
-        setTitle("Browse Items");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 400);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout());
-
-        userInfoLabel = new JLabel("Welcome, " + user.getName());
-        add(userInfoLabel, BorderLayout.NORTH);
-
-        String[] columnNames = {"Title", "Author", "Type", "Copies Available"};
-        tableModel = new DefaultTableModel(columnNames, 0);
-        itemTable = new JTable(tableModel);
-        JScrollPane scrollPane = new JScrollPane(itemTable);
-        add(scrollPane, BorderLayout.CENTER);
-
-        JPanel panel = new JPanel();
-        addButton = new JButton("Add to Cart");
-        checkoutButton = new JButton("Checkout");
-
-
-        /////////////////////CHATGPT -CHANGES YOU GAVE
-        myAccountButton = new JButton("My Account");
-        panel.add(myAccountButton);
-        myAccountButton.addActionListener(e -> displayMyAccountGUI());
-///////////////////////////
-
-        panel.add(addButton);
-        panel.add(checkoutButton);
-        add(panel, BorderLayout.SOUTH);
-
-        populateTable(lendingMaterialDAO.getAllLendingMaterials());
-    }
-*/
     public void setItems(List<LendingMaterial> items) {
         tableModel.setRowCount(0); // Clear existing data
         for (LendingMaterial item : items) {

@@ -54,6 +54,15 @@ public class Account {
         return checkedOutItems;
     }
 
+    public LendingMaterial getCheckedOutItemById(String materialId) {
+        for (LendingMaterial item : checkedOutItems) {
+            if (item.getMaterialID().equals(materialId)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     public void setCheckedOutItems(List<LendingMaterial> newCheckedOutItems) {
         this.checkedOutItems = new ArrayList<>(newCheckedOutItems);
         System.out.println("New Checked Out Items: " + this.checkedOutItems);

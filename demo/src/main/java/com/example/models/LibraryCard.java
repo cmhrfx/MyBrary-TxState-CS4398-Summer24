@@ -1,5 +1,7 @@
 package com.example.models;
 
+import org.bson.Document;
+
 public class LibraryCard {
     private String libraryCardNumber;
     private String userID;
@@ -35,5 +37,14 @@ public class LibraryCard {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    // Method to create a LibraryCard object from a MongoDB Document
+    public static LibraryCard fromDocument(Document doc) {
+        String libraryCardNumber = doc.getString("LibraryCardNumber");
+        String userID = doc.getString("AccountID");
+        String phoneNumber = doc.getString("Phone Number");
+
+        return new LibraryCard(libraryCardNumber, userID, phoneNumber);
     }
 }

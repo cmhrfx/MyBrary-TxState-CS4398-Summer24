@@ -14,11 +14,13 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoIterable;
 import com.mongodb.client.model.Filters;
+import com.example.models.Account;
 import com.example.models.Cart;
 import com.example.models.User;
 import com.example.view.BrowseView;
 import com.example.view.LoginView;
 import com.example.view.CheckoutView;
+import com.example.view.MyAccountView;
 
 import javax.swing.*;
 import java.time.LocalDate;
@@ -33,6 +35,7 @@ public class App {
     private static UserDAO userDAO;
     private static LendingMaterialDAO lendingMaterialDAO;
     private static AccountDAO accountDAO;
+    private static Account account;
     private static User user;
     private static Cart cart;
 
@@ -95,11 +98,7 @@ public class App {
 
         // Initialize the views
         LoginView loginView = new LoginView();
-        ///////////////////////////////////////////
-        AccountDAO accountDAO = new AccountDAOImpl(dbConnection);
-        BrowseView browseView = new BrowseView(user, cart, lendingMaterialDAO, accountDAO);  // Now passing accountDAO too
-        /////////////////
-        
+        BrowseView browseView = new BrowseView(user, cart, lendingMaterialDAO, accountDAO);        
         CheckoutView checkoutView = new CheckoutView(user, cart, accountDAO);
 
         // Initialize the login controller

@@ -4,6 +4,7 @@ import com.example.LibraryDatabaseConnection;
 import com.example.models.Account;
 import com.example.models.LendingMaterial;
 import com.example.models.Book;
+import com.example.models.LibraryCard;
 import com.example.models.Movie;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -33,6 +34,10 @@ public class AccountDAOImpl implements AccountDAO {
 
     private MongoCollection<Document> getReservationsCollection() {
         return database.getCollection("Reservations");
+    }
+
+    private MongoCollection<Document> getLibraryCardCollection() {
+        return database.getCollection("LibraryCards");
     }
 
     @Override
@@ -213,6 +218,43 @@ public class AccountDAOImpl implements AccountDAO {
         reservationsCollection.find().into(reservations);
         return reservations;
     }
+
+    @Override
+    public LibraryCard getLibraryCard(String accountId) {
+        MongoCollection<Document> libraryCardCollection = getLibraryCardCollection();
+        
+        // Query the collection for the document with the given userId
+        Document libraryCardDoc = libraryCardCollection.find(Filters.eq("AccountID", accountId)).first();
+        // Convert the document to a LibraryCard object if found
+        if (libraryCardDoc != null) {
+            System.out.println("library card found!");
+            return LibraryCard.fromDocument(libraryCardDoc); // Assuming you have a fromDocument method in LibraryCard class
+        }
+        System.out.println("No library card found!");
+        return null; // Return null if no document is found
+    }
+
+    @Override
+    public Document getLendedItemById(String materialID, String accountID) {
+        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+        return lendedItemsCollection.find(Filters.and(
+            Filters.eq("MaterialID", materialID),
+            Filters.eq("AccountID", accountID)
+        )).first();
+    }
+
+    @Override
+    public void updateLendedItemReturnDate(String materialID, String accountID, LocalDate newReturnDate) {
+    MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    lendedItemsCollection.updateOne(
+        Filters.and(
+            Filters.eq("MaterialID", materialID),
+            Filters.eq("AccountID", accountID)
+        ),
+        new Document("$set", new Document("ReturnDate", newReturnDate.format(formatter)))
+    );
+}
 
     public boolean returnLendedItem(String materialID, String accountID) {
         MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();

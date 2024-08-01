@@ -2,6 +2,7 @@ package com.example.dao;
 
 import com.example.models.Account;
 import com.example.models.LendingMaterial;
+import com.example.models.LibraryCard;
 import java.util.List;
 import java.time.LocalDate;
 
@@ -22,5 +23,8 @@ public interface AccountDAO {
     void reserveItem(String accountId, LendingMaterial lendingMaterial);
     LocalDate getReturnDate(LendingMaterial lendingMaterial);
     LocalDate getAvailableDate(LendingMaterial lendingMaterial);
+    LibraryCard getLibraryCard(String accountId);
+    Document getLendedItemById(String materialID, String accountId);
+    void updateLendedItemReturnDate(String materialID, String accountID, LocalDate newReturnDate);
 
 }

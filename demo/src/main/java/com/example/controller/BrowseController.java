@@ -9,6 +9,7 @@ import com.example.models.LendingMaterial;
 import com.example.models.Movie;
 import com.example.models.User;
 import com.example.view.LoginView;
+import com.example.view.MyAccountView;
 import com.example.view.BrowseView;
 import com.example.view.CheckoutView;
 
