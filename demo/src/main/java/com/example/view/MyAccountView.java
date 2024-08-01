@@ -3,6 +3,7 @@ package com.example.view;
 import com.example.dao.AccountDAO;
 import com.example.models.Account;
 import com.example.models.LendingMaterial;
+import org.bson.Document;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -46,19 +47,34 @@ public class MyAccountView extends JFrame {
     }
 
     private void populateTable(DefaultTableModel tableModel, List<LendingMaterial> items) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        List<Document> allLendedItems = accountDAO.getAllLendedItems(); // Get all lended items from the database
+
         tableModel.setRowCount(0); // Clear existing data
-    
+
         for (LendingMaterial item : items) {
-            // Safely handle potentially null return dates
-            String dueDateString = (item.getReturnDate() != null) ? item.getReturnDate().format(formatter) : "No return date";
+            // Initialize the due date string to "No return date"
+            String dueDateString = "No return date";
+
+            for (Document lendedItem : allLendedItems) {
+                String lendedMaterialID = lendedItem.getString("MaterialID");
+                String lendedAccountID = lendedItem.getString("AccountID");
+
+                // Check if the current item's ID and account ID match the lended item's details
+                if (lendedMaterialID.equals(item.getMaterialID()) && lendedAccountID.equals(account.getAccountId())) {
+                    dueDateString = lendedItem.getString("ReturnDate");
+                    break; // Found the matching document, no need to check further
+                }
+            }
+
             String[] data = {
                 item.getTitle(),
                 item.getAuthor(),
                 item.getSubType(),
-                dueDateString  // Use the safely formatted due date string or a placeholder
+                dueDateString  // Use the found due date string or the default "No return date"
             };
             tableModel.addRow(data);
         }
     }
+
+
 }
