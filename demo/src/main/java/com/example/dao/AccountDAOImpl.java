@@ -42,7 +42,7 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     private MongoCollection<Document> getLendingMaterialsCollection() {
-        return database.getCollection("LendingMaterials");
+        return database.getCollection("LendingMaterial");
     }
 
     private MongoCollection<Document> getReservationsCollection() {
@@ -312,10 +312,18 @@ public class AccountDAOImpl implements AccountDAO {
         lendedItemsCollection.find().forEach((Consumer<Document>) item -> {
             LocalDate returnDate = LocalDate.parse(item.getString("ReturnDate"), formatter);
             int daysOverdue = (int) ChronoUnit.DAYS.between(returnDate, today);
+
+            if (daysOverdue < 0) {
+                daysOverdue = 0;
+            }
             
             String lastFeeAccruedDateStr = item.getString("LastFeeAccruedDate");
             LocalDate lastFeeAccruedDate = lastFeeAccruedDateStr.isEmpty() ? returnDate : LocalDate.parse(lastFeeAccruedDateStr, formatter);
             int daysSinceLastAccrued = (int) ChronoUnit.DAYS.between(lastFeeAccruedDate, today);
+
+            if (daysSinceLastAccrued < 0) {
+                daysSinceLastAccrued = 0;
+            }
     
             String materialID = item.getString("MaterialID");
             LendingMaterial lendingMaterial = getLendingMaterialById(materialID);
@@ -370,7 +378,7 @@ public class AccountDAOImpl implements AccountDAO {
             
             // Update the account balance
             accountsCollection.updateOne(Filters.eq("AccountID", accountId),
-                Updates.set("AccountBalance", totalFees)
+                Updates.set("Balance", totalFees)
             );
         });
     }
@@ -411,23 +419,44 @@ public class AccountDAOImpl implements AccountDAO {
     }
 
     public LendingMaterial getLendingMaterialById(String materialID) {
-        Document doc = getLendingMaterialsCollection().find(Filters.eq("MaterialID", materialID)).first();
-        if (doc != null) {
-            String type = doc.getString("Type");
-            switch (type) {
-                case "Book":
-                    return Book.fromDocument(doc);
-                case "Movie":
-                    return Movie.fromDocument(doc);
-                case "Magazine":
-                    return Magazine.fromDocument(doc);
-                case "Journal":
-                    return Journal.fromDocument(doc);
-                default:
-                    throw new IllegalArgumentException("Unknown type: " + type);
-            }
+        System.out.println("Searching for materialID: " + materialID);
+        
+        // Check the collection name and connection
+        MongoCollection<Document> collection = getLendingMaterialsCollection();
+        if (collection == null) {
+            System.out.println("LendingMaterials collection is null. Check the database connection and collection name.");
+            return null;
         }
-        return null;
+    
+        // Search for the document
+        Document doc = collection.find(Filters.eq("MaterialID", materialID)).first();
+        if (doc == null) {
+            System.out.println("No document found with MaterialID: " + materialID);
+            return null;
+        }
+    
+        System.out.println("Document found: " + doc.toJson());
+    
+        // Check for the type field
+        String type = doc.getString("Type"); // Ensure the field name is correct
+        if (type == null) {
+            System.out.println("Type field is missing in the document: " + doc.toJson());
+            return null;
+        }
+    
+        // Process the document based on type
+        switch (type) {
+            case "Book":
+                return Book.fromDocument(doc);
+            case "Movie":
+                return Movie.fromDocument(doc);
+            case "Magazine":
+                return Magazine.fromDocument(doc);
+            case "Journal":
+                return Journal.fromDocument(doc);
+            default:
+                throw new IllegalArgumentException("Unknown type: " + type);
+        }
     }
     
 }

@@ -54,12 +54,12 @@ public class App {
         accountDAO = new AccountDAOImpl(dbConnection);
 
         // Update OverDue Items
-        updateOverdueItems(accountDAO);
-        // accountDAO.updateLendedItemFees();
+        // updateOverdueItems(accountDAO);
+        accountDAO.updateLendedItemFees();
 
         // Update Account Balances
-        updateAccountBalance(accountDAO);
-        // accountDAO.updateAccountBalance();
+        // updateAccountBalance(accountDAO);
+        accountDAO.updateAccountBalance();
 
         // MAIN DEBUG
         MongoDatabase database = dbConnection.getDatabase();
