@@ -14,9 +14,13 @@ public interface AccountDAO {
     void deleteAccount(int accountId);
     void updateLendedItems(List<LendingMaterial> items, String accountId);
     List<Document> getAllLendedItems();
+    List<Document> getAllReservations();
     void updateLendedItemDaysOverdue(Document item, long daysOverdue);
     void updateLendedItemLastBalanceUpdate(Document item, LocalDate lastBalanceUpdate);
     void incrementAccountBalance(String accountId, double amount);
     boolean returnLendedItem(String materialID, String accountID);
+    void reserveItem(String accountId, LendingMaterial lendingMaterial);
+    LocalDate getReturnDate(LendingMaterial lendingMaterial);
+    LocalDate getAvailableDate(LendingMaterial lendingMaterial);
 
 }

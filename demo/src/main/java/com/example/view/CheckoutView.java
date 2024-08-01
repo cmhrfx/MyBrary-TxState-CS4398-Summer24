@@ -98,10 +98,6 @@ public class CheckoutView extends JFrame {
         tableModel.setRowCount(0);
     }
 
-    public void displayMessage(String message) {
-        JOptionPane.showMessageDialog(this, message);
-    }
-
     public void addConfirmListener(ActionListener listener) {
         for (ActionListener al : confirmButton.getActionListeners()) {
             confirmButton.removeActionListener(al);
@@ -129,5 +125,9 @@ public class CheckoutView extends JFrame {
 
     public void removeSelectedRow(int row) {
         tableModel.removeRow(row);
+    }
+
+    public void displayMessage(String message) {
+        JOptionPane.showMessageDialog(this, message);
     }
 }

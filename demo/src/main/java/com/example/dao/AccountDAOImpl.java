@@ -31,6 +31,10 @@ public class AccountDAOImpl implements AccountDAO {
         return database.getCollection("LendedItems");
     }
 
+    private MongoCollection<Document> getReservationsCollection() {
+        return database.getCollection("Reservations");
+    }
+
     @Override
     public Account getAccountById(String accountId) {
         Document doc = getAccountsCollection().find(Filters.eq("AccountID", accountId)).first();
@@ -58,23 +62,10 @@ public class AccountDAOImpl implements AccountDAO {
     @Override
     public void updateLendedItems(List<LendingMaterial> items, String accountId) {
         MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
-        LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
+        LocalDate currentDate = LocalDate.now();
         for (LendingMaterial item : items) {
-            LocalDate returnDate;
-            if (item instanceof Book) {
-                Book book = (Book) item;
-                if (book.getBestSeller() == true) {
-                    returnDate = currentDate.plusWeeks(2);
-                } else {
-                    returnDate = currentDate.plusWeeks(3);
-                }
-            } else if (item instanceof Movie) {
-                returnDate = currentDate.plusWeeks(2);
-            } else {
-                continue;
-            }
+            LocalDate returnDate = getReturnDate(item);
             Document lendedItemDoc = new Document("MaterialID", item.getMaterialID())
                 .append("AccountID", accountId)
                 .append("LendedDate", currentDate.format(formatter))
@@ -121,30 +112,130 @@ public class AccountDAOImpl implements AccountDAO {
         );
     }
 
-public boolean returnLendedItem(String materialID, String accountID) {
-    MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
-    MongoCollection<Document> accountsCollection = getAccountsCollection();
+    @Override
+    public void reserveItem(String accountId, LendingMaterial item) {
+        MongoCollection<Document> reservationsCollection = getReservationsCollection();
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate availableDate = getAvailableDate(item);
 
-    // Find and delete the item in the LendedItems collection
-    Document foundItem = lendedItemsCollection.find(Filters.and(
-        Filters.eq("MaterialID", materialID),
-        Filters.eq("AccountID", accountID)
-    )).first();
-    
-    if (foundItem != null) {
-        lendedItemsCollection.deleteOne(foundItem);
-
-        // Now, remove the item from the CheckedOutItems array in the Accounts collection
-        accountsCollection.updateOne(
-            Filters.eq("AccountID", accountID),
-            Updates.pull("CheckedOutItems", new Document("MaterialID", materialID))
-        );
-
-        return true;
+        Document reservationsDoc = new Document("MaterialID", item.getMaterialID())
+            .append("AccountID", accountId)
+            .append("ReservedOn", currentDate.format(formatter))
+            .append("AvailableOn", availableDate.format(formatter));
+        reservationsCollection.insertOne(reservationsDoc);
     }
-    return false;
-}
 
+    @Override
+    public LocalDate getReturnDate(LendingMaterial item) {
+        LocalDate returnDate;
+        LocalDate currentDate = LocalDate.now();
+        if (item instanceof Book) {
+            Book book = (Book) item;
+            if (book.getBestSeller() == true) {
+                returnDate = currentDate.plusWeeks(2);
+            } else {
+                returnDate = currentDate.plusWeeks(3);
+            }
+        } else if (item instanceof Movie) {
+            returnDate = currentDate.plusWeeks(2);
+        } else {
+            System.out.println("Bad returnDate definition! returning localDate!");
+            returnDate = currentDate;
+        }
+        return returnDate;
+    }
 
+    @Override
+    public LocalDate getAvailableDate(LendingMaterial lendingMaterial) {
+        List<Document> lendedItems = getAllLendedItems();
+        List<Document> reservations = getAllReservations();
+        LocalDate latestAvailableOnDate = null;
+        LocalDate nearestReturnDate = null;
+    
+        // Search reservations for the latest AvailableOn date for the material
+        for (Document reservation : reservations) {
+            if (reservation.getString("MaterialID").equals(lendingMaterial.getMaterialID())) {
+                LocalDate availableOn = LocalDate.parse(reservation.getString("AvailableOn"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                if (latestAvailableOnDate == null || availableOn.isAfter(latestAvailableOnDate)) {
+                    latestAvailableOnDate = availableOn;
+                }
+            }
+        }
+    
+        // If not reserved, search lended items for the nearest ReturnDate
+        if (latestAvailableOnDate == null) {
+            for (Document lendedItem : lendedItems) {
+                if (lendedItem.getString("MaterialID").equals(lendingMaterial.getMaterialID())) {
+                    LocalDate returnDate = LocalDate.parse(lendedItem.getString("ReturnDate"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                    if (nearestReturnDate == null || returnDate.isBefore(nearestReturnDate)) {
+                        nearestReturnDate = returnDate;
+                    }
+                }
+            }
+        } else {
+            // If reserved, calculate the return date based on the latest available date
+            nearestReturnDate = getReturnDateFromAvailableOn(latestAvailableOnDate, lendingMaterial);
+        }
+    
+        // Return the appropriate date
+        if (latestAvailableOnDate != null) {
+            return nearestReturnDate;
+        } else if (nearestReturnDate != null) {
+            return nearestReturnDate;
+        } else {
+            // If no reservations or lended items found, it's available immediately
+            return LocalDate.now();
+        }
+    }
+
+    private LocalDate getReturnDateFromAvailableOn(LocalDate availableOn, LendingMaterial item) {
+        LocalDate returnDate;
+        if (item instanceof Book) {
+            Book book = (Book) item;
+            if (book.getBestSeller()) {
+                returnDate = availableOn.plusWeeks(2);
+            } else {
+                returnDate = availableOn.plusWeeks(3);
+            }
+        } else if (item instanceof Movie) {
+            returnDate = availableOn.plusWeeks(2);
+        } else {
+            returnDate = availableOn; // Default case, assuming no specific return date
+        }
+        return returnDate;
+    }
+
+    @Override
+    public List<Document> getAllReservations() {
+        MongoCollection<Document> reservationsCollection = getReservationsCollection();
+        List<Document> reservations = new ArrayList<>();
+        reservationsCollection.find().into(reservations);
+        return reservations;
+    }
+
+    public boolean returnLendedItem(String materialID, String accountID) {
+        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+        MongoCollection<Document> accountsCollection = getAccountsCollection();
+
+        // Find and delete the item in the LendedItems collection
+        Document foundItem = lendedItemsCollection.find(Filters.and(
+            Filters.eq("MaterialID", materialID),
+            Filters.eq("AccountID", accountID)
+        )).first();
+        
+        if (foundItem != null) {
+            lendedItemsCollection.deleteOne(foundItem);
+
+            // Now, remove the item from the CheckedOutItems array in the Accounts collection
+            accountsCollection.updateOne(
+                Filters.eq("AccountID", accountID),
+                Updates.pull("CheckedOutItems", new Document("MaterialID", materialID))
+            );
+
+            return true;
+        }
+        return false;
+    }
 
 }

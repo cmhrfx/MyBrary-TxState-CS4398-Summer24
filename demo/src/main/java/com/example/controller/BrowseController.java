@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.dao.LendingMaterialDAO;
 import com.example.dao.AccountDAO;
+import com.example.models.Account;
 import com.example.models.Book;
 import com.example.models.Cart;
 import com.example.models.LendingMaterial;
@@ -57,6 +58,12 @@ public class BrowseController {
 
     private void handleAddToCart() {
         LendingMaterial selectedItem = view.getSelectedItem();
+
+        if (selectedItem.getCopiesAvailable() == 0) {
+            view.displayMessage("Not enough copies available!", true, () -> handleReserve(selectedItem));
+            return;
+        }
+
         if (selectedItem != null) {
             if (selectedItem instanceof Book || selectedItem instanceof Movie) {
                 int totalItems = cart.getNumberOfItems();
@@ -64,35 +71,42 @@ public class BrowseController {
                     if (user.getAge() <= 12) {
                         if (totalItems < 5) { // Limit of 5 items for users 12 and under
                             cart.addItem(selectedItem);
-                            view.displayMessage("Item added to cart!");
+                            view.displayMessage("Item added to cart!", false, null);
                             System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
                         } else {
-                            view.displayMessage("Maximum limit of 5 items reached!");
+                            view.displayMessage("Maximum limit of 5 items reached!", false, null);
                         }
                     } else {
                         if (totalItems < 8) { // Limit of 8 items for members over the age of 12
                             cart.addItem(selectedItem);
-                            view.displayMessage("Item added to cart!");
+                            view.displayMessage("Item added to cart!", false, null);
                             System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
                         } else {
-                            view.displayMessage("Maximum limit of 8 items reached!");
+                            view.displayMessage("Maximum limit of 8 items reached!", false, null);
                         }
                     }
                 } else if (user.getType().equalsIgnoreCase("Staff")) {
                     if (totalItems < 12) { // Limit of 12 items for staff
                         cart.addItem(selectedItem);
-                        view.displayMessage("Item added to cart!");
+                        view.displayMessage("Item added to cart!", false, null);
                         System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
                     } else {
-                        view.displayMessage("Maximum limit of 12 items reached!");
+                        view.displayMessage("Maximum limit of 12 items reached!", false, null);
                     }
                 }
             } else {
-                view.displayMessage("Only books and movies can be added to the cart!");
+                view.displayMessage("Only books and movies can be added to the cart!", false, null);
             }
         } else {
-            view.displayMessage("No item selected!");
+            view.displayMessage("No item selected!", false, null);
         }
+    }
+
+    private void handleReserve(LendingMaterial item) {
+        // Implement your reservation logic here
+        System.out.println("Reserving item with MaterialID: " + item.getMaterialID());
+        accountDAO.reserveItem(user.getAccountId(), item);
+        view.displayMessage("Item has been reserved!", false, null);
     }
         
     private void handleCheckout() {

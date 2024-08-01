@@ -183,8 +183,24 @@ public class BrowseView extends JFrame {
 ///////////////////////////////////
 
 
-    public void displayMessage(String message) {
-        JOptionPane.showMessageDialog(this, message);
+    public void displayMessage(String message, boolean showReserveOption, Runnable reserveAction) {
+        if (showReserveOption) {
+            int option = JOptionPane.showOptionDialog(
+                    this, 
+                    message, 
+                    "Information", 
+                    JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.INFORMATION_MESSAGE, 
+                    null, 
+                    new String[]{"Reserve", "OK"}, 
+                    "OK"
+            );
+            if (option == JOptionPane.YES_OPTION) {
+                reserveAction.run();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, message);
+        }
     }
 
     public void addLogoutListener(ActionListener listener) {
