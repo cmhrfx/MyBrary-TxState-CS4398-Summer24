@@ -20,6 +20,7 @@ public class MyAccountView extends JFrame {
     private AccountDAO accountDAO;
     private LendingMaterialDAO lendingMaterialDAO;
     private JTable itemTable; // Declare the JTable at the class level
+    private JTable reservationTable; // Declare the JTable for reservations
     private User user;
 
     public MyAccountView(Account account, AccountDAO accountDAO, LendingMaterialDAO lendingMaterialDAO) {
@@ -57,6 +58,14 @@ public class MyAccountView extends JFrame {
 
         add(infoPanel, BorderLayout.NORTH);
 
+        // Panel to hold tables
+        JPanel tablesPanel = new JPanel();
+        tablesPanel.setLayout(new BoxLayout(tablesPanel, BoxLayout.Y_AXIS));
+
+        // Label for checked out items
+        JLabel checkedOutItemsLabel = new JLabel("Checked Out Items");
+        tablesPanel.add(checkedOutItemsLabel);
+
         // Initialize itemTable
         String[] columnNames = {"MaterialID", "Title", "Author", "Type", "Due Date", "Actions"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0) {
@@ -69,11 +78,26 @@ public class MyAccountView extends JFrame {
         itemTable.setRowHeight(40); // Set the row height to 40 pixels
         itemTable.getColumn("Actions").setCellRenderer(new ButtonRenderer());
         itemTable.getColumn("Actions").setCellEditor(new ButtonEditor(new JCheckBox(), this));
-        JScrollPane scrollPane = new JScrollPane(itemTable);
-        add(scrollPane, BorderLayout.CENTER);
+        JScrollPane itemScrollPane = new JScrollPane(itemTable);
+        tablesPanel.add(itemScrollPane);
 
-        // Populate the table
+        // Label for reservations
+        JLabel reservationsLabel = new JLabel("Reservations");
+        tablesPanel.add(reservationsLabel);
+
+        // Initialize reservationTable
+        String[] reservationColumnNames = {"MaterialID", "Title", "Author", "Type", "Reserved On", "Available On"};
+        DefaultTableModel reservationTableModel = new DefaultTableModel(reservationColumnNames, 0);
+        reservationTable = new JTable(reservationTableModel);
+        reservationTable.setRowHeight(40); // Set the row height to 40 pixels
+        JScrollPane reservationScrollPane = new JScrollPane(reservationTable);
+        tablesPanel.add(reservationScrollPane);
+
+        add(tablesPanel, BorderLayout.CENTER);
+
+        // Populate the tables
         populateTable(tableModel, account.getCheckedOutItems());
+        populateReservationsTable(reservationTableModel, account.getAccountId());
 
         setVisible(true);
     }
@@ -107,6 +131,29 @@ public class MyAccountView extends JFrame {
                 "Return/Renew" // Placeholder for buttons
             };
             tableModel.addRow(data);
+        }
+    }
+
+    private void populateReservationsTable(DefaultTableModel tableModel, String accountId) {
+        List<Document> reservations = accountDAO.getAllReservations(); // Get all reservations from the database
+
+        tableModel.setRowCount(0); // Clear existing data
+
+        for (Document reservation : reservations) {
+            if (reservation.getString("AccountID").equals(accountId)) {
+                String materialID = reservation.getString("MaterialID");
+                LendingMaterial item = lendingMaterialDAO.getLendingMaterialById(materialID);
+
+                String[] data = {
+                    materialID,
+                    item.getTitle(),
+                    item.getAuthor(),
+                    item.getSubType(),
+                    reservation.getString("ReservedOn"),
+                    reservation.getString("AvailableOn")
+                };
+                tableModel.addRow(data);
+            }
         }
     }
 
@@ -164,8 +211,6 @@ public class MyAccountView extends JFrame {
         }
     }
     
-    
-
     class ButtonRenderer extends JPanel implements TableCellRenderer {
         private final JButton returnButton = new JButton("Return");
         private final JButton renewButton = new JButton("Renew");
