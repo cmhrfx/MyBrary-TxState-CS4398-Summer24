@@ -10,5 +10,6 @@ public interface LendingMaterialDAO {
     void insertLendingMaterial(LendingMaterial lendingMaterial);
     void updateLendingMaterial(LendingMaterial lendingMaterial);
     void deleteLendingMaterial(String id);
+    void incrementLendingMaterial(LendingMaterial lendingMaterials);
     void decrementLendingMaterials(List<LendingMaterial> lendingMaterials);
 }

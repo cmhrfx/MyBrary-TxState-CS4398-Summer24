@@ -26,5 +26,5 @@ public interface AccountDAO {
     LibraryCard getLibraryCard(String accountId);
     Document getLendedItemById(String materialID, String accountId);
     void updateLendedItemReturnDate(String materialID, String accountID, LocalDate newReturnDate);
-
+    Boolean reservationExists(LendingMaterial lendingMaterial);
 }

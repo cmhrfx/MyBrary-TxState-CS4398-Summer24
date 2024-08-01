@@ -11,6 +11,7 @@ import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -253,9 +254,17 @@ public class AccountDAOImpl implements AccountDAO {
             Filters.eq("AccountID", accountID)
         ),
         new Document("$set", new Document("ReturnDate", newReturnDate.format(formatter)))
-    );
-}
+        );
+    }
 
+    @Override
+    public Boolean reservationExists(LendingMaterial lendingMaterial) {
+        MongoCollection<Document> reservationsCollection = getReservationsCollection();
+        Document reservation = reservationsCollection.find(Filters.eq("MaterialID", lendingMaterial.getMaterialID())).first();
+        return reservation != null;
+    }
+
+    @Override
     public boolean returnLendedItem(String materialID, String accountID) {
         MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
         MongoCollection<Document> accountsCollection = getAccountsCollection();
@@ -265,19 +274,29 @@ public class AccountDAOImpl implements AccountDAO {
             Filters.eq("MaterialID", materialID),
             Filters.eq("AccountID", accountID)
         )).first();
-        
+
         if (foundItem != null) {
+            System.out.println("Found lended item: " + foundItem);
             lendedItemsCollection.deleteOne(foundItem);
+            System.out.println("Deleted lended item from LendedItems collection");
 
             // Now, remove the item from the CheckedOutItems array in the Accounts collection
-            accountsCollection.updateOne(
+            UpdateResult updateResult = accountsCollection.updateOne(
                 Filters.eq("AccountID", accountID),
                 Updates.pull("CheckedOutItems", new Document("MaterialID", materialID))
             );
 
-            return true;
+            if (updateResult.getModifiedCount() > 0) {
+                System.out.println("Deleted item from CheckedOutItems in Accounts collection");
+                return true;
+            } else {
+                System.out.println("Failed to delete item from CheckedOutItems in Accounts collection");
+            }
+        } else {
+            System.out.println("No lended item found with MaterialID: " + materialID + " and AccountID: " + accountID);
         }
         return false;
     }
 
+    
 }

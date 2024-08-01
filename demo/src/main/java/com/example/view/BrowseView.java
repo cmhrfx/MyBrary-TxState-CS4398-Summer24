@@ -137,7 +137,7 @@ public class BrowseView extends JFrame {
     ///////////////////////////CHATGPT -CHANGES YOU GAVE
     private void displayMyAccountGUI() {
         Account account = accountDAO.getAccountById(user.getAccountId());
-        new MyAccountView(account, accountDAO).setVisible(true);
+        new MyAccountView(account, accountDAO, lendingMaterialDAO).setVisible(true);
     }
 ///////////////////////////////////
 

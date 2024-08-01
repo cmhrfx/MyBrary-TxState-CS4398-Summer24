@@ -1,6 +1,7 @@
 package com.example.view;
 
 import com.example.dao.AccountDAO;
+import com.example.dao.LendingMaterialDAO;
 import com.example.models.Account;
 import com.example.models.User;
 import com.example.models.LendingMaterial;
@@ -17,12 +18,14 @@ import java.util.List;
 public class MyAccountView extends JFrame {
     private Account account;
     private AccountDAO accountDAO;
+    private LendingMaterialDAO lendingMaterialDAO;
     private JTable itemTable; // Declare the JTable at the class level
     private User user;
 
-    public MyAccountView(Account account, AccountDAO accountDAO) {
+    public MyAccountView(Account account, AccountDAO accountDAO, LendingMaterialDAO lendingMaterialDAO) {
         this.account = account;
         this.accountDAO = accountDAO;
+        this.lendingMaterialDAO = lendingMaterialDAO;
         this.user = User.getInstance();
 
         setTitle("My Account");
@@ -112,10 +115,19 @@ public class MyAccountView extends JFrame {
             // Ensure this is the correct index for MaterialID
             String materialID = (String) itemTable.getModel().getValueAt(selectedRow, 0);
             String accountID = account.getAccountId();
-
+    
             boolean isReturned = accountDAO.returnLendedItem(materialID, accountID);
             if (isReturned) {
-                populateTable((DefaultTableModel) itemTable.getModel(), account.getCheckedOutItems()); // Refresh the table
+                // Update the Account object by removing the item
+                LendingMaterial item = account.getCheckedOutItemById(materialID);
+                lendingMaterialDAO.incrementLendingMaterial(item);
+
+                if (item != null) {
+                    account.removeCheckedOutItem(item);
+                }
+    
+                // Refresh the table with updated checked-out items list
+                populateTable((DefaultTableModel) itemTable.getModel(), account.getCheckedOutItems());
                 JOptionPane.showMessageDialog(this, "Item successfully returned.");
             } else {
                 JOptionPane.showMessageDialog(this, "Item could not be returned.");
@@ -129,6 +141,12 @@ public class MyAccountView extends JFrame {
         if (selectedRow != -1) {
             String materialID = (String) itemTable.getModel().getValueAt(selectedRow, 0);
             LendingMaterial item = account.getCheckedOutItemById(materialID);
+    
+            if (accountDAO.reservationExists(item)) {
+                JOptionPane.showMessageDialog(this, "Item cannot be renewed due to an existing reservation.");
+                return;
+            }
+    
             LocalDate newReturnDate = accountDAO.getReturnDate(item);
             accountDAO.updateLendedItemReturnDate(materialID, account.getAccountId(), newReturnDate);
             populateTable((DefaultTableModel) itemTable.getModel(), account.getCheckedOutItems()); // Refresh the table
@@ -137,6 +155,7 @@ public class MyAccountView extends JFrame {
             JOptionPane.showMessageDialog(this, "No item selected.");
         }
     }
+    
 
     class ButtonRenderer extends JPanel implements TableCellRenderer {
         private final JButton returnButton = new JButton("Return");

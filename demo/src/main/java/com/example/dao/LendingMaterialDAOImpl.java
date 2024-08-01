@@ -55,6 +55,16 @@ public class LendingMaterialDAOImpl implements LendingMaterialDAO {
     }
 
     @Override
+    public void incrementLendingMaterial(LendingMaterial item) {
+        item.setCopiesAvailable(item.getCopiesAvailable() + 1);
+        getCollection().updateOne(
+            Filters.eq("MaterialID", item.getMaterialID()),
+            new Document("$set", new Document("CopiesAvailable", item.getCopiesAvailable()))
+        );
+    }
+    
+
+    @Override
     public void decrementLendingMaterials(List<LendingMaterial> lendingMaterials) {
         for (LendingMaterial item : lendingMaterials) {
             item.setCopiesAvailable(item.getCopiesAvailable() - 1);
