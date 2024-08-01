@@ -102,7 +102,7 @@ public class AccountDAOImpl implements AccountDAO {
         MongoCollection<Document> accountsCollection = getAccountsCollection();
         accountsCollection.updateOne(
             Filters.eq("AccountID", accountId),
-            new Document("$inc", new Document("balance", amount))
+            new Document("$inc", new Document("Balance", amount))
         );
     }
 
