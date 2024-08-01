@@ -106,9 +106,6 @@ public class MyAccountView extends JFrame {
             JOptionPane.showMessageDialog(this, "No item selected.");
         }
     }
-        
-    
-    
 }
 
 

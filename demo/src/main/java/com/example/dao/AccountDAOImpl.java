@@ -3,6 +3,8 @@ package com.example.dao;
 import com.example.LibraryDatabaseConnection;
 import com.example.models.Account;
 import com.example.models.LendingMaterial;
+import com.example.models.Book;
+import com.example.models.Movie;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
@@ -58,9 +60,21 @@ public class AccountDAOImpl implements AccountDAO {
         MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate returnDate = currentDate.plusWeeks(3);
 
         for (LendingMaterial item : items) {
+            LocalDate returnDate;
+            if (item instanceof Book) {
+                Book book = (Book) item;
+                if (book.getBestSeller() == true) {
+                    returnDate = currentDate.plusWeeks(2);
+                } else {
+                    returnDate = currentDate.plusWeeks(3);
+                }
+            } else if (item instanceof Movie) {
+                returnDate = currentDate.plusWeeks(2);
+            } else {
+                continue;
+            }
             Document lendedItemDoc = new Document("MaterialID", item.getMaterialID())
                 .append("AccountID", accountId)
                 .append("LendedDate", currentDate.format(formatter))
