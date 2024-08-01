@@ -100,6 +100,7 @@ public class App {
         LoginView loginView = new LoginView();
         BrowseView browseView = new BrowseView(user, cart, lendingMaterialDAO, accountDAO);        
         CheckoutView checkoutView = new CheckoutView(user, cart, accountDAO);
+        // MyAccountView accountView = new MyAccountView(account, accountDAO, lendingMaterialDAO);
 
         // Initialize the login controller
         new LoginController(userDAO, lendingMaterialDAO, accountDAO, loginView, browseView, cart, user);

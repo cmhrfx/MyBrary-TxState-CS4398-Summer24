@@ -10,6 +10,7 @@ public class Book extends LendingMaterial {
     private String publisher;
     private String subType;
     private Boolean bestSeller;
+    private double value;
 
     // Default constructor
     public Book() {
@@ -28,13 +29,15 @@ public class Book extends LendingMaterial {
                 @JsonProperty("Genre") String genre,
                 @JsonProperty("Height") int height,
                 @JsonProperty("Publisher") String publisher,
-                @JsonProperty("BestSeller") Boolean bestSeller) {
+                @JsonProperty("BestSeller") Boolean bestSeller,
+                @JsonProperty("Value") double value) {
         super(materialID, title, author, type, test, copiesAvailable);
         this.subType = "Book";
         this.genre = genre;
         this.height = height;
         this.publisher = publisher;
         this.bestSeller = bestSeller;
+        this.value = value;
     }
 
     // Getters and setters
@@ -70,6 +73,14 @@ public class Book extends LendingMaterial {
         this.bestSeller = bestSeller;
     }
 
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
+
     @Override
     public String getSubType() {
         return subType;
@@ -102,7 +113,8 @@ public class Book extends LendingMaterial {
                 .append("Genre", genre)
                 .append("Height", height)
                 .append("Publisher", publisher)
-                .append("BestSeller", bestSeller);
+                .append("BestSeller", bestSeller)
+                .append("Value", value);
     }
 
     // Convert from MongoDB Document
@@ -117,7 +129,8 @@ public class Book extends LendingMaterial {
                 doc.getString("Genre"),
                 doc.getInteger("Height"),
                 doc.getString("Publisher"),
-                doc.getBoolean("BestSeller")
+                doc.getBoolean("BestSeller"),
+                doc.getDouble("Value")
         );
     }
 }

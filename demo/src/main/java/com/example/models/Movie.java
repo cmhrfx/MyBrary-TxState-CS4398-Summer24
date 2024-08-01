@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Movie extends LendingMaterial {
     private String subType;
+    private double value; 
+
     // Default constructor
     public Movie() {
         super();
@@ -18,11 +20,21 @@ public class Movie extends LendingMaterial {
                  @JsonProperty("Author") String author,
                  @JsonProperty("Type") String type,
                  @JsonProperty("Test") String test,
-                 @JsonProperty("CopiesAvailable") int copiesAvailable) {
+                 @JsonProperty("CopiesAvailable") int copiesAvailable,
+                 @JsonProperty("Value") double value) { 
         super(materialID, title, author, type, test, copiesAvailable);
-
         this.subType = "Movie";
+        this.value = value; 
     }   
+
+    // Getters and setters
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
+    }
 
     @Override
     public String getSubType() {
@@ -52,7 +64,8 @@ public class Movie extends LendingMaterial {
     // Convert to MongoDB Document
     @Override
     public Document toDocument() {
-        return super.toDocument();
+        return super.toDocument()
+                .append("Value", value); 
     }
 
     // Convert from MongoDB Document
@@ -63,7 +76,8 @@ public class Movie extends LendingMaterial {
                 doc.getString("Author"),
                 doc.getString("Type"),
                 doc.getString("Test"),
-                doc.getInteger("CopiesAvailable")
+                doc.getInteger("CopiesAvailable"),
+                doc.getDouble("Value")
         );
     }
 }
