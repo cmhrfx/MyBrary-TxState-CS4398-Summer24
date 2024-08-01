@@ -77,6 +77,7 @@ public class AccountDAOImpl implements AccountDAO {
                 .append("LendedDate", currentDate.format(formatter))
                 .append("ReturnDate", returnDate.format(formatter))
                 .append("LastBalanceUpdate", "")
+                .append("BeenRenewed", false)
                 .append("DaysOverdue", 0);
             lendedItemsCollection.insertOne(lendedItemDoc);
         }
@@ -262,6 +263,18 @@ public class AccountDAOImpl implements AccountDAO {
         MongoCollection<Document> reservationsCollection = getReservationsCollection();
         Document reservation = reservationsCollection.find(Filters.eq("MaterialID", lendingMaterial.getMaterialID())).first();
         return reservation != null;
+    }
+
+    @Override
+    public void setLendedItemBeenRenewed(String materialID, String accountID, boolean beenRenewed) {
+        MongoCollection<Document> lendedItemsCollection = getLendedItemsCollection();
+        lendedItemsCollection.updateOne(
+            Filters.and(
+                Filters.eq("MaterialID", materialID),
+                Filters.eq("AccountID", accountID)
+            ),
+            new Document("$set", new Document("BeenRenewed", beenRenewed))
+        );
     }
 
     @Override

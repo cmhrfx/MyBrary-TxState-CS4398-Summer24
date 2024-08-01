@@ -27,4 +27,5 @@ public interface AccountDAO {
     Document getLendedItemById(String materialID, String accountId);
     void updateLendedItemReturnDate(String materialID, String accountID, LocalDate newReturnDate);
     Boolean reservationExists(LendingMaterial lendingMaterial);
+    void setLendedItemBeenRenewed(String materialID, String accountID, boolean beenRenewed);
 }

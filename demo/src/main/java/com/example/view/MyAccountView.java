@@ -142,6 +142,12 @@ public class MyAccountView extends JFrame {
             String materialID = (String) itemTable.getModel().getValueAt(selectedRow, 0);
             LendingMaterial item = account.getCheckedOutItemById(materialID);
     
+            Document lendedItem = accountDAO.getLendedItemById(materialID, account.getAccountId());
+            if (lendedItem != null && lendedItem.getBoolean("BeenRenewed", false)) {
+                JOptionPane.showMessageDialog(this, "Item cannot be renewed again.");
+                return;
+            }
+    
             if (accountDAO.reservationExists(item)) {
                 JOptionPane.showMessageDialog(this, "Item cannot be renewed due to an existing reservation.");
                 return;
@@ -149,12 +155,15 @@ public class MyAccountView extends JFrame {
     
             LocalDate newReturnDate = accountDAO.getReturnDate(item);
             accountDAO.updateLendedItemReturnDate(materialID, account.getAccountId(), newReturnDate);
+            accountDAO.setLendedItemBeenRenewed(materialID, account.getAccountId(), true);
+    
             populateTable((DefaultTableModel) itemTable.getModel(), account.getCheckedOutItems()); // Refresh the table
             JOptionPane.showMessageDialog(this, "Item successfully renewed.");
         } else {
             JOptionPane.showMessageDialog(this, "No item selected.");
         }
     }
+    
     
 
     class ButtonRenderer extends JPanel implements TableCellRenderer {
