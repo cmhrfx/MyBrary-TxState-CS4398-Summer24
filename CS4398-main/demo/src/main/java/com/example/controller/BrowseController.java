@@ -31,7 +31,7 @@ public class BrowseController {
         this.user = User.getInstance();
         this.lendingMaterialDAO = lendingMaterialDAO;
         this.accountDAO = accountDAO;
-        this.cart = cart;
+        this.cart = Cart.getInstance();
 
         System.out.println("BrowseController: Cart received: " + (this.cart != null));
 
@@ -51,20 +51,33 @@ public class BrowseController {
         LendingMaterial selectedItem = view.getSelectedItem();
         if (selectedItem != null) {
             if (selectedItem instanceof Book || selectedItem instanceof Movie) {
-                if (user.getAge() <= 12) {
-                    int totalItems = cart.getNumberOfItems();
-                    if (totalItems < 5) { // Limit of 5 items (books or movies) for users 12 and under
+                int totalItems = cart.getNumberOfItems();
+                if (user.getType().equalsIgnoreCase("Member")) {
+                    if (user.getAge() <= 12) {
+                        if (totalItems < 5) { // Limit of 5 items for users 12 and under
+                            cart.addItem(selectedItem);
+                            view.displayMessage("Item added to cart!");
+                            System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
+                        } else {
+                            view.displayMessage("Maximum limit of 5 items reached!");
+                        }
+                    } else {
+                        if (totalItems < 8) { // Limit of 8 items for members over the age of 12
+                            cart.addItem(selectedItem);
+                            view.displayMessage("Item added to cart!");
+                            System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
+                        } else {
+                            view.displayMessage("Maximum limit of 8 items reached!");
+                        }
+                    }
+                } else if (user.getType().equalsIgnoreCase("Staff")) {
+                    if (totalItems < 12) { // Limit of 12 items for staff
                         cart.addItem(selectedItem);
                         view.displayMessage("Item added to cart!");
                         System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
                     } else {
-                        view.displayMessage("Maximum limit of 5 items reached!");
+                        view.displayMessage("Maximum limit of 12 items reached!");
                     }
-                } else {
-                    // No limit for users 13 and up
-                    cart.addItem(selectedItem);
-                    view.displayMessage("Item added to cart!");
-                    System.out.println("Added item to cart, MaterialID: " + selectedItem.getMaterialID());
                 }
             } else {
                 view.displayMessage("Only books and movies can be added to the cart!");

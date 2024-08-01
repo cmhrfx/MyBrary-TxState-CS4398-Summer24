@@ -9,10 +9,12 @@ public class Book extends LendingMaterial {
     private int height;
     private String publisher;
     private String subType;
+    private Boolean bestSeller;
 
     // Default constructor
     public Book() {
         super();
+        this.subType = "Book";
     }
 
     // Parameterized constructor
@@ -21,18 +23,18 @@ public class Book extends LendingMaterial {
                 @JsonProperty("Title") String title,
                 @JsonProperty("Author") String author,
                 @JsonProperty("Type") String type,
-                @JsonProperty("Available") boolean available,
-                @JsonProperty("CheckedOutDate") String checkedOutDate,
-                @JsonProperty("CheckedOutBy") String checkedOutBy,
+                @JsonProperty("Test") String test,
                 @JsonProperty("CopiesAvailable") int copiesAvailable,
                 @JsonProperty("Genre") String genre,
                 @JsonProperty("Height") int height,
-                @JsonProperty("Publisher") String publisher) {
-        super(materialID, title, author, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
+                @JsonProperty("Publisher") String publisher,
+                @JsonProperty("BestSeller") Boolean bestSeller) {
+        super(materialID, title, author, type, test, copiesAvailable);
         this.subType = "Book";
         this.genre = genre;
         this.height = height;
         this.publisher = publisher;
+        this.bestSeller = bestSeller;
     }
 
     // Getters and setters
@@ -60,6 +62,14 @@ public class Book extends LendingMaterial {
         this.publisher = publisher;
     }
 
+    public Boolean getBestSeller() {
+        return bestSeller;
+    }
+
+    public void setBestSeller(Boolean bestSeller) {
+        this.bestSeller = bestSeller;
+    }
+
     @Override
     public String getSubType() {
         return subType;
@@ -68,9 +78,7 @@ public class Book extends LendingMaterial {
     @Override
     public void checkout(String user, String date) {
         if (isAvailable()) {
-            setAvailable(false);
-            setCheckedOutBy(user);
-            setCheckedOutDate(date);
+            decrementCopies();
             System.out.println("The book '" + getTitle() + "' by " + getAuthor() + " has been checked out by " + user + " on " + date + ".");
         } else {
             System.out.println("The book '" + getTitle() + "' is already checked out.");
@@ -80,9 +88,7 @@ public class Book extends LendingMaterial {
     @Override
     public void returnMaterial() {
         if (!isAvailable()) {
-            setAvailable(true);
-            setCheckedOutBy(null);
-            setCheckedOutDate(null);
+            incrementCopies();
             System.out.println("The book '" + getTitle() + "' by " + getAuthor() + " has been returned.");
         } else {
             System.out.println("The book '" + getTitle() + "' is not checked out.");
@@ -95,7 +101,8 @@ public class Book extends LendingMaterial {
         return super.toDocument()
                 .append("Genre", genre)
                 .append("Height", height)
-                .append("Publisher", publisher);
+                .append("Publisher", publisher)
+                .append("BestSeller", bestSeller);
     }
 
     // Convert from MongoDB Document
@@ -105,13 +112,12 @@ public class Book extends LendingMaterial {
                 doc.getString("Title"),
                 doc.getString("Author"),
                 doc.getString("Type"),
-                doc.getBoolean("Available"),
-                doc.getString("CheckedOutDate"),
-                doc.getString("CheckedOutBy"),
+                doc.getString("Test"),
                 doc.getInteger("CopiesAvailable"),
                 doc.getString("Genre"),
                 doc.getInteger("Height"),
-                doc.getString("Publisher")
+                doc.getString("Publisher"),
+                doc.getBoolean("BestSeller")
         );
     }
 }

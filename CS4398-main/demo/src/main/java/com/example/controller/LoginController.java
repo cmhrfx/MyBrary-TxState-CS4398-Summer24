@@ -26,7 +26,7 @@ public class LoginController {
         this.userDAO = userDAO;
         this.lendingMaterialDAO = lendingMaterialDAO;
         this.accountDAO = accountDAO;
-        this.cart = cart;
+        this.cart = Cart.getInstance();
         this.loginView = loginView;
         this.browseView = browseView;
         this.user = User.getInstance();

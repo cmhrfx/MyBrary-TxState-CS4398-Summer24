@@ -17,11 +17,11 @@ public class Account {
     private double balance;
 
     // Constructor
-    public Account(String accountId, String userId, String type, double balance) {
+    public Account(String accountId, String userId, String type, double balance, List<LendingMaterial> checkedOutItems) {
         this.accountId = accountId;
         this.userId = userId;
         this.type = type;
-        this.checkedOutItems = new ArrayList<>();
+        this.checkedOutItems = checkedOutItems != null ? new ArrayList<>(checkedOutItems) : new ArrayList<>();
         this.balance = balance;
     }
 
@@ -55,10 +55,8 @@ public class Account {
     }
 
     public void setCheckedOutItems(List<LendingMaterial> newCheckedOutItems) {
-        if (this.checkedOutItems == null) {
-            this.checkedOutItems = new ArrayList<>();
-        }
-        this.checkedOutItems.addAll(newCheckedOutItems);
+        this.checkedOutItems = new ArrayList<>(newCheckedOutItems);
+        System.out.println("New Checked Out Items: " + this.checkedOutItems);
     }
 
     public void addCheckedOutItem(LendingMaterial item) {
@@ -94,17 +92,17 @@ public class Account {
 
     // Deserialize a MongoDB Document to an Account object
     public static Account fromDocument(Document doc) {
-        Account account = new Account(doc.getString("AccountID"),
-                                      doc.getString("UserID"),
-                                      doc.getString("Type"),
-                                      doc.getDouble("Balance").doubleValue());
-    
         List<Document> checkedOutItemsDocs = (List<Document>) doc.get("CheckedOutItems");
+        if (checkedOutItemsDocs != null) {
+            System.out.println("checkedOutItemsDocs not null: " + checkedOutItemsDocs);
+        } else {
+             System.out.println("checkedOutItemsDocs null");
+        }
         List<LendingMaterial> checkedOutItems = new ArrayList<>();
         for (Document itemDoc : checkedOutItemsDocs) {
             LendingMaterial item = null;
-            String type = itemDoc.getString("Type");
-            
+            String type = itemDoc.getString("Test");
+
             if (type != null) {
                 switch (type) {
                     case "Book":
@@ -113,7 +111,7 @@ public class Account {
                     case "Movie":
                         item = Movie.fromDocument(itemDoc);
                         break;
-                    // add cases for other types if needed
+
                     default:
                         System.err.println("Unknown type: " + type);
                         break;
@@ -121,12 +119,17 @@ public class Account {
             } else {
                 System.err.println("Type is null in document: " + itemDoc);
             }
-            
+
             if (item != null) {
                 checkedOutItems.add(item);
             }
         }
-        account.setCheckedOutItems(checkedOutItems);
+
+        Account account = new Account(doc.getString("AccountID"),
+                                      doc.getString("UserID"),
+                                      doc.getString("Type"),
+                                      doc.getDouble("Balance").doubleValue(),
+                                      checkedOutItems);
         return account;
     }
 }

@@ -24,9 +24,7 @@ public abstract class LendingMaterial {
     private String title;
     private String author;
     private String type;
-    private boolean available;
-    private String checkedOutDate;
-    private String checkedOutBy;
+    private String test;
     private int copiesAvailable;
     
     // Default constructor
@@ -39,17 +37,13 @@ public abstract class LendingMaterial {
                            @JsonProperty("Title") String title,
                            @JsonProperty("Author") String author,
                            @JsonProperty("Type") String type,
-                           @JsonProperty("Available") boolean available,
-                           @JsonProperty("CheckedOutDate") String checkedOutDate,
-                           @JsonProperty("CheckedOutBy") String checkedOutBy,
+                           @JsonProperty("Test") String test,
                            @JsonProperty("CopiesAvailable") int copiesAvailable) {
         this.materialID = materialID;
         this.title = title;
         this.author = author;
         this.type = type;
-        this.available = available;
-        this.checkedOutDate = checkedOutDate;
-        this.checkedOutBy = checkedOutBy;
+        this.test = test;
         this.copiesAvailable = copiesAvailable;
     }
 
@@ -86,30 +80,6 @@ public abstract class LendingMaterial {
         this.type = type;
     }
 
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
-
-    public String getCheckedOutDate() {
-        return checkedOutDate;
-    }
-
-    public void setCheckedOutDate(String checkedOutDate) {
-        this.checkedOutDate = checkedOutDate;
-    }
-
-    public String getCheckedOutBy() {
-        return checkedOutBy;
-    }
-
-    public void setCheckedOutBy(String checkedOutBy) {
-        this.checkedOutBy = checkedOutBy;
-    }
-
     public int getCopiesAvailable() {
         return copiesAvailable;
     }
@@ -123,6 +93,18 @@ public abstract class LendingMaterial {
         return Math.min(fine, getMaxFine());
     }
 
+    public boolean isAvailable() {
+        return copiesAvailable > 0;
+    }
+
+    public void incrementCopies() {
+        copiesAvailable++;
+    }
+
+    public void decrementCopies() {
+        copiesAvailable--;
+    }
+
     private double getMaxFine() {
         // Return the maximum fine, which could be the value of the book or some predefined value
         return 20.0; // Example value
@@ -133,9 +115,7 @@ public abstract class LendingMaterial {
                 .append("Title", title)
                 .append("Author", author)
                 .append("Type", type)
-                .append("Available", available)
-                .append("CheckedOutDate", checkedOutDate)
-                .append("CheckedOutBy", checkedOutBy)
+                .append("Test", test)
                 .append("CopiesAvailable", copiesAvailable);
     }
 

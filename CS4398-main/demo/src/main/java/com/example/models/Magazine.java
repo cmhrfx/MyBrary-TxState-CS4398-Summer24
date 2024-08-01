@@ -18,11 +18,9 @@ public class Magazine extends LendingMaterial {
                     @JsonProperty("Title") String title,
                     @JsonProperty("Author") String author,
                     @JsonProperty("Type") String type,
-                    @JsonProperty("Available") boolean available,
-                    @JsonProperty("CheckedOutDate") String checkedOutDate,
-                    @JsonProperty("CheckedOutBy") String checkedOutBy,
+                    @JsonProperty("Test") String test,
                     @JsonProperty("CopiesAvailable") int copiesAvailable) {
-        super(materialID, title, author, type, available, checkedOutDate, checkedOutBy, copiesAvailable);
+        super(materialID, title, author, type, test, copiesAvailable);
 
         this.subType = "Magazine";
     }
@@ -35,9 +33,7 @@ public class Magazine extends LendingMaterial {
     @Override
     public void checkout(String user, String date) {
         if (isAvailable()) {
-            setAvailable(false);
-            setCheckedOutBy(user);
-            setCheckedOutDate(date);
+            decrementCopies();
             System.out.println("The magazine '" + getTitle() + "' by " + getAuthor() + " has been checked out by " + user + " on " + date + ".");
         } else {
             System.out.println("The magazine '" + getTitle() + "' is already checked out.");
@@ -47,9 +43,7 @@ public class Magazine extends LendingMaterial {
     @Override
     public void returnMaterial() {
         if (!isAvailable()) {
-            setAvailable(true);
-            setCheckedOutBy(null);
-            setCheckedOutDate(null);
+            incrementCopies();
             System.out.println("The magazine '" + getTitle() + "' by " + getAuthor() + " has been returned.");
         } else {
             System.out.println("The magazine '" + getTitle() + "' is not checked out.");
@@ -69,9 +63,7 @@ public class Magazine extends LendingMaterial {
                 doc.getString("Title"),
                 doc.getString("Author"),
                 doc.getString("Type"),
-                doc.getBoolean("Available"),
-                doc.getString("CheckedOutDate"),
-                doc.getString("CheckedOutBy"),
+                doc.getString("Test"),
                 doc.getInteger("CopiesAvailable")
         );
     }

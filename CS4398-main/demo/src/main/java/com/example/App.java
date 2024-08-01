@@ -34,6 +34,7 @@ public class App {
     private static LendingMaterialDAO lendingMaterialDAO;
     private static AccountDAO accountDAO;
     private static User user;
+    private static Cart cart;
 
     public static void main(String[] args) {
         // database connection parameters
@@ -78,7 +79,7 @@ public class App {
         // END OF DEBUG
 
         // Initialize the Cart
-        Cart cart = new Cart();
+        cart = Cart.getInstance();
         System.out.println("Cart initialized: " + (cart != null));
 
         // initialize the user
