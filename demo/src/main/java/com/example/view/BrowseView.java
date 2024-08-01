@@ -204,7 +204,7 @@ public class BrowseView extends JFrame {
     }
 
     public void updateUserDialogue(){
-        userInfoLabel.setText("Welcome, " + user.getName());  // Update the text of the user info label
+        userInfoLabel.setText("Welcome, " + user.getName());
     }
 
 }

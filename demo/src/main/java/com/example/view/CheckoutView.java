@@ -22,6 +22,7 @@ public class CheckoutView extends JFrame {
     private JButton previousButton;
     private JButton removeButton;
     private JButton confirmButton;
+    private JLabel userInfoLabel;
 
     public CheckoutView(User user, Cart cart, AccountDAO accountDAO) {
         this.user = User.getInstance();
@@ -37,7 +38,7 @@ public class CheckoutView extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        JLabel userInfoLabel = new JLabel("User: " + user.getName() + " - Checkout");
+        userInfoLabel = new JLabel("User: " + user.getName() + " - Checkout");
         add(userInfoLabel, BorderLayout.NORTH);
 
         String[] columnNames = {"Title", "Author"};
@@ -85,8 +86,16 @@ public class CheckoutView extends JFrame {
         }
     }
 
+    public void updateUserInfo() {
+        userInfoLabel.setText("User: " + user.getName());
+    }
+
     public void setCart(List<LendingMaterial> items) {
         populateTable(items);
+    }
+
+    public void clearCart() {
+        tableModel.setRowCount(0);
     }
 
     public void displayMessage(String message) {

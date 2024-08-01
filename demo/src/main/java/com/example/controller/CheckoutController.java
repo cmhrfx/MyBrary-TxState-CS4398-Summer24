@@ -42,6 +42,7 @@ public class CheckoutController {
         if (canCheckout()) {
             updateAccountWithCheckedOutItems();
             cart.clearCart();
+            view.clearCart();
             view.displayMessage("Checkout confirmed! Thank you for your purchase.");
             view.setVisible(false);
             browseView.setVisible(true);

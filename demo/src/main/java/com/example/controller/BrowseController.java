@@ -49,6 +49,8 @@ public class BrowseController {
     }
 
     private void handleLogout(){
+        cart.clearCart();
+        checkoutView.clearCart();
         view.setVisible(false);
         loginView.setVisible(true);
     }
@@ -95,6 +97,7 @@ public class BrowseController {
         
     private void handleCheckout() {
         checkoutView.setCart(cart.getItems());
+        checkoutView.updateUserInfo();
         view.setVisible(false);
         checkoutView.setVisible(true);
     }
