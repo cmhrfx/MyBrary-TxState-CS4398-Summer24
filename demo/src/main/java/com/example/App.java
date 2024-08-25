@@ -44,7 +44,7 @@ public class App {
 
     public static void main(String[] args) {
         // database connection parameters
-        String connectionString = "mongodb+srv://chris:bobcats24@cluster0.qxcbrdu.mongodb.net/";
+        String connectionString = "mongodb+srv://chris:******@cluster0.qxcbrdu.mongodb.net/";
         String databaseName = "Library";
 
         // DAO object instantiation
